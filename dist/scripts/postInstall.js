@@ -22,7 +22,7 @@ var rbcPath = _path2.default.resolve(__dirname, "../../"); /**
                                                             * Copyright 2014-present. | All rights reserved.
                                                             */
 
-var clientPath = _path2.default.resolve(rbcPath, "../../../");
+var clientPath = _path2.default.resolve(rbcPath, "../../");
 var rbcJSON = _path2.default.resolve(rbcPath, "package.json");
 var clientJSON = _path2.default.resolve(clientPath, 'package.json');
 var rbcJSONData = _fsExtra2.default.readJsonSync(rbcJSON, { throws: false });
