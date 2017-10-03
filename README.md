@@ -2,6 +2,8 @@
 
 Create React projects without configuration time.
 
+**Note:** This pack is still under development, there are still undocumented functionalities. ***Do not use for production***
+
 # Quick Overview
 Create a New folder or open the folder where you want this package installed.
 
