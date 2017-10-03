@@ -12,17 +12,17 @@ var _child_process = require('child_process');
 
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
-var rbcPath = _path2.default.resolve(__dirname, "../"); /**
-                                                         * File: install.js | Package: React Base Starter Project
-                                                         * 
-                                                         * This source code is licensed under the MIT license found in the
-                                                         * LICENSE file in the root directory of this source tree
-                                                         * 
-                                                         * CapitalMental && BackLogics Technologies
-                                                         * Copyright 2014-present. | All rights reserved.
-                                                         */
+var rbcPath = _path2.default.resolve(__dirname, "../../"); /**
+                                                            * File: install.js | Package: React Base Starter Project
+                                                            * 
+                                                            * This source code is licensed under the MIT license found in the
+                                                            * LICENSE file in the root directory of this source tree
+                                                            * 
+                                                            * CapitalMental && BackLogics Technologies
+                                                            * Copyright 2014-present. | All rights reserved.
+                                                            */
 
-var clientPath = _path2.default.resolve(rbcPath, "../../");
+var clientPath = _path2.default.resolve(rbcPath, "../../../");
 var rbcJSON = _path2.default.resolve(rbcPath, "package.json");
 var clientJSON = _path2.default.resolve(clientPath, 'package.json');
 var rbcJSONData = _fsExtra2.default.readJsonSync(rbcJSON, { throws: false });
