@@ -8,7 +8,7 @@
     "test": "babel-node --presets env src/scripts/boot.js",
     "basic": "node scripts/basicPackages",
     "inspect": "babel-node --inspect --presets env scripts/start",
-    "postinstall": "babel-node --presets env ./scripts/postInstall.js && echo \"P O S T  I N S T A L L  S C R I P T\"",
+    "postinstall": "babel-node --presets env ./dist/scripts/postInstall.js && echo \"P O S T  I N S T A L L  S C R I P T\"",
     "preinstall": "node ./scripts/preInstall.js",
     "//preinstall": "npm run compile",
     "compile": "rimraf ./dist && babel --presets env --plugins transform-object-rest-spread -d ./dist/ ./src/ --copy-files",
