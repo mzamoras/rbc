@@ -1,0 +1,37 @@
+<!DOCTYPE html>
+<html id="__electron__">
+
+<head>
+    <meta charset="UTF-8">
+    <title>Hello World!</title>
+</head>
+
+<body>
+    <h1>Hello World!</h1>
+    We are using node
+    <script>
+        document.write(process.versions.node)
+    </script>, Chrome
+    <script>
+        document.write(process.versions.chrome)
+    </script>, and Electron
+    <script>
+        document.write(process.versions.electron)
+    </script>.
+    <div id="appRoot">
+        Loading app...
+    </div>
+    <script>
+        var electron = require('electron');
+        const publicDir = electron.remote.getGlobal('publicPathRel');
+
+        document.write('<link rel="stylesheet" type="text\/css" href="' + publicDir + '/css/base.css"\/>');
+        document.write('<link rel="stylesheet" type="text\/css" href="' + publicDir + '/css/app.css"\/>');
+
+        document.write("<script type='text\/javascript' src='" + publicDir + "/js/boot.js'><\/script>");
+        document.write("<script type='text\/javascript' src='" + publicDir + "/js/base.js'><\/script>");
+        document.write("<script type='text\/javascript' src='" + publicDir + "/js/app.js'><\/script>");
+    </script>
+</body>
+
+</html>
