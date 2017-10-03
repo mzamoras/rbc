@@ -12,8 +12,8 @@ import fse from "fs-extra";
 import path from 'path';
 import { exec } from 'child_process';
 
-const rbcPath        = path.resolve( __dirname, "../" );
-const clientPath     = path.resolve( rbcPath, "../../" );
+const rbcPath        = path.resolve( __dirname, "../../" );
+const clientPath     = path.resolve( rbcPath, "../../../" );
 const rbcJSON        = path.resolve( rbcPath, "package.json" );
 const clientJSON     = path.resolve( clientPath, 'package.json' );
 const rbcJSONData    = fse.readJsonSync( rbcJSON, { throws: false } );
