@@ -20,7 +20,7 @@ import getURLData from '../utilities/getURLData.js';
 export default function( isProductionEnvironment, hot, custom, gziped, bundle ){
 
     const hasProxy         = !!custom.base.proxyURL;
-    const isStatic         = custom.base.useStaticHTML || true;
+    const isStatic         = custom.base.useStaticHTML || hasProxy ? false :  true;
     const allowCrossOrigin = custom.base.allowCrossOrigin;
 
     const serverLocalURL = getURLData( custom.base.localURL );
@@ -44,8 +44,15 @@ export default function( isProductionEnvironment, hot, custom, gziped, bundle ){
         open           : custom.base.autoOpenChrome,
         ghostMode      : false,
         cors           : allowCrossOrigin,
-        localOnly      : true,
         logSnippet     : true,
+
+
+        /**
+         * Space to Add SSL Certificates ( self signed are most common )
+         */
+        ... ( custom.base.sslCert && {
+            https: custom.base.sslCert
+        } ),
 
         /**
          * Server config is needed when a static content
@@ -75,6 +82,7 @@ export default function( isProductionEnvironment, hot, custom, gziped, bundle ){
                     }
                 },
                 socket:{
+                    port: socketPort,
                     domain: `${serverLocalURL.simple}:${socketPort}`
                 }
             } 

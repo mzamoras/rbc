@@ -88,12 +88,20 @@ export default class Package extends DataCollector{
 
     copyTemplateFiles(){
 
-        const observe = rx.Observable.create( function(obs) {
+        const observe = rx.Observable.create( obs => {
               obs.onNext({
                 type   : 'confirm',
                 name   : 'copy',
                 message: ' Copy template files based on your ( rbc.config.js ) configuration file ?',
                 default: false
+              });
+
+              obs.onNext({
+                type   : 'confirm',
+                name   : 'viewBlade',
+                message: ' Since your project has a proxy,\n Would you like to use php blade file for index template ( app.blade.php ) ? \nNote:( For Laravel Usage ) ?',
+                default: false,
+                when   : answers => answers.copy && !!this.client.configFileData.base.proxyURL
               });
         
               obs.onCompleted();
@@ -105,6 +113,11 @@ export default class Package extends DataCollector{
                 fse.copySync(this.rbc.templates_react, path.resolve(this.client.configFileData.paths.src, "react"));
                 fse.copySync(this.rbc.templates_electron, path.resolve(this.client.configFileData.paths.src, "electron"));
                 fse.copySync(this.rbc.templates_public, this.client.configFileData.paths.dest);
+
+                if( answers.viewBlade){
+                    fse.copySync(this.rbc.templates_views, path.resolve(this.client.configFileData.paths.src, "views"));
+                }
+                
                 console.log( 'Templates Copied');
             }
             else{
@@ -116,8 +129,8 @@ export default class Package extends DataCollector{
     startServer(){
         return new Promise( (resolve, reject) =>{
             
-            const wpConf  = this.wpConfig( this.env.isProduction, this.env.isHot, this.env.isGZip, this.env.doMinimize, this.client.configFileData );
-            const bsConf  = this.bsConfig( this.env.isProduction, this.env.isHot, this.client.configFileData, this.env.isGZip, webpack( wpConf ) );
+            const wpConf = this.wpConfig( this.env.isProduction, this.env.isHot, this.env.isGZip, this.env.doMinimize, this.client.configFileData );
+            const bsConf = this.bsConfig( this.env.isProduction, this.env.isHot, this.client.configFileData, this.env.isGZip, webpack( wpConf ) );
     
             const browserSync = browserSyncServer.create( 'mainBrowserSyncServer' );
             

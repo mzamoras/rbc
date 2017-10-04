@@ -21,7 +21,7 @@ var _extends = Object.assign || function (target) { for (var i = 1; i < argument
 exports.default = function (isProductionEnvironment, hot, custom, gziped, bundle) {
 
     var hasProxy = !!custom.base.proxyURL;
-    var isStatic = custom.base.useStaticHTML || true;
+    var isStatic = custom.base.useStaticHTML || hasProxy ? false : true;
     var allowCrossOrigin = custom.base.allowCrossOrigin;
 
     var serverLocalURL = (0, _getURLData2.default)(custom.base.localURL);
@@ -45,9 +45,10 @@ exports.default = function (isProductionEnvironment, hot, custom, gziped, bundle
         open: custom.base.autoOpenChrome,
         ghostMode: false,
         cors: allowCrossOrigin,
-        localOnly: true,
         logSnippet: true
 
+    }, custom.base.sslCert && {
+        https: custom.base.sslCert
     }, isStatic && {
         server: {
             baseDir: '' + publicPathRelative,
@@ -63,6 +64,7 @@ exports.default = function (isProductionEnvironment, hot, custom, gziped, bundle
             }
         },
         socket: {
+            port: socketPort,
             domain: serverLocalURL.simple + ':' + socketPort
         }
     }, {

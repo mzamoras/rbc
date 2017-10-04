@@ -110,7 +110,9 @@ function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { de
                 if (useServer) {
                     _this.pack.startServer().then(function () {
                         var to = setTimeout(function () {
-                            _this.pack.runElectronApp();
+                            if (runElectron) {
+                                _this.pack.runElectronApp();
+                            }
                             clearTimeout(to);
                         }, 500);
                     });

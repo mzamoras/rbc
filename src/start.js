@@ -114,7 +114,9 @@ taketalk({
                 if( useServer ){
                     this.pack.startServer().then( ()=>{
                         const to = setTimeout( ()=>{
-                            this.pack.runElectronApp();
+                            if(runElectron){
+                                this.pack.runElectronApp();
+                            }
                             clearTimeout(to);
                         }, 500 );
                     } );

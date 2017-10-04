@@ -28,5 +28,5 @@
         console.log("[Browsersync] Script inserted successfully! [ browser-sync-client." + process.env.BS_VER + " ]");
         return;
     }
-    console.log("[Browsersync] Script is already inserted!");
+    console.log("[Browsersync]", currentScript ? " Script is already inserted!" : " There was an error inserting the script!");
 })(window, document);

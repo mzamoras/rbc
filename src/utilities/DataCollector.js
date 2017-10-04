@@ -76,12 +76,14 @@ export default class DataCollector{
                                         ? require( this.client.configFilePath )(this.env.isProduction, this.env.isHot) 
                                         :            null ;
         this.client.srcExist = this.client.configFileData ? fse.pathExistsSync( this.client.configFileData.paths.src ) : false;
+        this.client.srcExist = this.client.configFileData ? fse.pathExistsSync( this.client.configFileData.paths.src_react ) : false;
 
         //Rbc
         this.rbc.path                = path.resolve( __dirname, "../../" );
         this.rbc.templatesPath       = path.resolve( this.rbc.path, "templates" );
         this.rbc.templates_structure = path.resolve( this.rbc.templatesPath, "structure" );
         this.rbc.templates_assets    = path.resolve( this.rbc.templates_structure, "assets" );
+        this.rbc.templates_views     = path.resolve( this.rbc.templates_structure, "views" );
         this.rbc.templates_electron  = path.resolve( this.rbc.templates_structure, "electron" );
         this.rbc.templates_react     = path.resolve( this.rbc.templates_structure, "react" );
         this.rbc.templates_public    = path.resolve( this.rbc.templates_structure, "public" );

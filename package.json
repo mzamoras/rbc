@@ -18,8 +18,8 @@
     "rbc-start": "./scripts/_start.js",
     "rbc-pi": "./scripts/install.js"
   },
-  "author": "",
-  "license": "ISC",
+  "author": "MiKE Zamora <mzamoras@backlogics.com>",
+  "license": "SEE LICENSE IN LICENSE",
   "devDependencies": {
   },
   "dependencies": {

@@ -95,6 +95,7 @@ var DataCollector = function () {
             this.client.configFilePath = _path2.default.resolve(this.client.path, this.fileNames.configFile);
             this.client.configFileData = _fsExtra2.default.pathExistsSync(this.client.configFilePath) ? require(this.client.configFilePath)(this.env.isProduction, this.env.isHot) : null;
             this.client.srcExist = this.client.configFileData ? _fsExtra2.default.pathExistsSync(this.client.configFileData.paths.src) : false;
+            this.client.srcExist = this.client.configFileData ? _fsExtra2.default.pathExistsSync(this.client.configFileData.paths.src_react) : false;
 
             //Rbc
             this.rbc.path = _path2.default.resolve(__dirname, "../../");
