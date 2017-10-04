@@ -141,6 +141,16 @@ var Package = function (_DataCollector) {
                     default: false
                 });
 
+                obs.onNext({
+                    type: 'confirm',
+                    name: 'viewBlade',
+                    message: ' Since your project has a proxy,\n Would you like to use php blade file for index template ( app.blade.php ) ? \nNote:( For Laravel Usage ) ?',
+                    default: false,
+                    when: function when(answers) {
+                        return answers.copy && !!_this3.client.configFileData.base.proxyURL;
+                    }
+                });
+
                 obs.onCompleted();
             });
 
@@ -150,6 +160,11 @@ var Package = function (_DataCollector) {
                     _fsExtra2.default.copySync(_this3.rbc.templates_react, _path2.default.resolve(_this3.client.configFileData.paths.src, "react"));
                     _fsExtra2.default.copySync(_this3.rbc.templates_electron, _path2.default.resolve(_this3.client.configFileData.paths.src, "electron"));
                     _fsExtra2.default.copySync(_this3.rbc.templates_public, _this3.client.configFileData.paths.dest);
+
+                    if (answers.viewBlade) {
+                        _fsExtra2.default.copySync(_this3.rbc.templates_views, _path2.default.resolve(_this3.client.configFileData.paths.src, "views"));
+                    }
+
                     console.log('Templates Copied');
                 } else {
                     console.log('Nothing Copied');
