@@ -93,6 +93,13 @@ To use a proxied server follow these steps:
     - **media** ( optional folder )
     - **less**  ( optional folder )
         
+        
+| Name      | Type   | Description                      | Required   |
+| --------- | ------ | -------------------------------- | :--------: |
+| public    | folder | Here goes all the compiled files | yes        |
+| react     | folder | React main files                 | yes        |
+| electron  | folder | Electron main files              | yes        |
+| assets    | folder | Files needed to create the app   | yes        |
 
 
 # Includes
