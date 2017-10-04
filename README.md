@@ -63,29 +63,35 @@ In this file you will be able to setup your project and the main variables requi
 # Using Proxied Server
 To use a proxied server follow these steps:
 
-    // 1. Add the package to your package.json dependencies
+1. Add the package to your package.json dependencies
        "yarn add https://github.com/mzamoras/rbc"
 
-    // 2. Run the Main Script for the first time
+2. Run the Main Script for the first time
        npm run rbc::start
 
-    // 3. Fill in the questions:
-        a. Project Name ( any name )
-        b. Local URL ( eg. http://localhost:5000 )
-        c. Proxy URL ( eg. http://example.com:80 )
+3. Fill in the questions:
 
-    // 4. Run the Main Script again, and select to copy templates, 
-       or make sure to have the folder structure in your project
-        a. Public Folder        ( required )
-            - remove any index.html, so the proxy can work.
-        b. React Folder         ( required )
-        c. Electron Folder      ( required )
-        d. Assets Folder With:  ( required )
-            - css   ( optional )
-            - js    ( optional )
-            - fonts ( optional )
-            - media ( optional )
-            - less  ( optional )
+    a. Project Name ( any name ).
+
+    b. Local URL ( eg. http://localhost:5000 )
+    
+    c. Proxy URL ( eg. http://example.com:80 )
+
+4. Run the Main Script again, and select to copy templates, or make sure to have the folder structure in your project.
+
+    a. **public** Folder        ( required folder ).
+    - remove any index.html, so the proxy can work.
+
+    b. **react** Folder         ( required folder ).
+    
+    c. **electron** Folder      ( required folder ).
+    
+    d. **assets** Folder With:  ( required folder ).
+    - **css**   ( optional folder )
+    - **js**    ( optional folder )
+    - **fonts** ( optional folder )
+    - **media** ( optional folder )
+    - **less**  ( optional folder )
         
 
 
