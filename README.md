@@ -6,6 +6,7 @@ Create React projects without configuration time.
 
 ***Do not use for production***
 
+
 # Quick Overview
 Create a New folder or open the folder where you want this package installed.
 
@@ -24,6 +25,17 @@ yarn add https://github.com/mzamoras/rbc
 npm run rbc::start
 ````
 
+# Index
+	
+Github automatically parses anchor tags out of your headers. So you can do the following:
+
+1. [Configuration File](#start-script-option)  
+1. [Editing Configuration File](#start-script-option)  
+1. [Folder Structure](#start-script-option)  
+1. [Main Script](#start-script-option)  
+1. [Using Proxied Server](#start-script-option)  
+1. [Using Static Server](#start-script-option)  
+
 # Configuration file
 When you run this package for the first time, you will be required to answer some questions in order to create the configuration file:
 * **rbc.config.js**
@@ -37,9 +49,7 @@ When you run this package for the first time, you will be required to answer som
 In this file you will be able to setup your project and the main variables required to make it work:
 
 1. Basic Paths
-
 2. SSL Certificates 
-
 3. Webpack Configuration:    
     * Entry
     * Output
@@ -52,6 +62,19 @@ In this file you will be able to setup your project and the main variables requi
 * Public
 
 # Start Script Option
+
+### Calling the script
+Once you add this pack to your dependencies, you will be able to call the main script trough this command:
+```sh
+    npm run rbc::start
+```
+### First Run
+The first time you run this script, it will check for configuration file existence ( rbc.config.js ) on your project root, if it doesn't exist, the script will help you to create it, just answer a few question and that will be it.
+
+The questions are:  
+1. Project Name: 
+
+### Script Options
 * Run Server
 * Run Electron
 * Run Both
@@ -71,10 +94,8 @@ To use a proxied server follow these steps:
 
 3. Fill in the questions:
 
-    a. Project Name ( any name ).
-
-    b. Local URL ( eg. http://localhost:5000 )
-    
+    a. Project Name ( any name ).  
+    b. Local URL ( eg. http://localhost:5000 )  
     c. Proxy URL ( eg. http://example.com:80 )
 
 4. Run the Main Script again, and select to copy templates, or make sure to have the folder structure in your project.
@@ -100,6 +121,7 @@ To use a proxied server follow these steps:
 | react     | folder | React main files                 | yes        |
 | electron  | folder | Electron main files              | yes        |
 | assets    | folder | Files needed to create the app   | yes        |
+
 
 
 # Includes
