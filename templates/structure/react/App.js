@@ -1,43 +1,34 @@
 
 import React from 'react';
-import PropTypes from 'prop-types';
-import className from 'classnames';
-import injectSheet, {ThemeProvider} from 'react-jss'
-import {important, midSize} from '../assets/less/components/global.less';
+import {ThemeProvider} from 'react-jss'
 import defaultTheme from './themes/default';
 
-const cssStyles = theme => ({
-    red:{ 
-        color: 'red',
-        fontSize: 12,
-        fontWeight: 'bold'
-    }
-});
+//Replace with your component
+import RbcWelcome from './components/rbc/RbcWelcome';
 
 class App extends React.Component{
 
-    render(){
-
-        const cssClass = className( important, midSize );
-
-        return(
-            <ThemeProvider theme={defaultTheme()}>
-                <div className={this.props.className}>
-                    This ia App Component v007
-                    <div className={cssClass}>React Base Components</div>
-                    <div className={this.props.classes.red}>
-                        Using JSS
-                    </div>
-                    {this.props.children}
-                </div>
-            </ThemeProvider>
-            
-        );
-
+    constructor( props ){
+        super( props );
+        this.state = {
+            themeStyle: "light"
+        }
+        this.handleThemeChange = this.handleThemeChange.bind(this);
     }
 
-    static propTypes = {
-        className: PropTypes.string
+    handleThemeChange(){
+        this.setState({ 
+            themeStyle: this.state.themeStyle === 'light' ? 'dark' : 'light' 
+        });
+    }
+
+    render(){    
+        return(
+            <ThemeProvider theme={ defaultTheme( this.state.themeStyle ) }>
+                <RbcWelcome handleThemeChange={this.handleThemeChange} themeStyle={this.state.themeStyle}/>
+            </ThemeProvider>    
+        );
     }
 }
-export default injectSheet(cssStyles)(App);
+
+export default App;

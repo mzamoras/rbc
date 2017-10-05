@@ -123,6 +123,13 @@ To use a proxied server follow these steps:
 | assets    | folder | Files needed to create the app   | yes        |
 
 
+# Using Laravel
+## New Project
+1. Install Laravel Installer
+2. run `laravel new projectName`
+
+Install Laravel and create a 
+
 
 # Includes
 * To Create:

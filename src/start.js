@@ -54,8 +54,8 @@ taketalk({
                     `ReConfigure` ,
                     `Delete Configuration and Start Over` ,
                     new inquirer.Separator(),
-                    `Compile RBC package`,
-                    `Compile RBC package Hot`,
+                    `Compile RBC package | One time`,
+                    `Compile RBC package | Watch Mode`,
                     new inquirer.Separator(),
                 ],
                 default: 0
@@ -66,7 +66,7 @@ taketalk({
                 message: 'Do you want to run in PRODUCTION environment ?',
                 default: false,
                 when   : answers => {
-                    return answers.reqCommand === "Run Server" || answers.reqCommand === "Run Both"
+                    return answers.reqCommand.indexOf("Run") > -1
                 }
             },
             {
@@ -95,6 +95,15 @@ taketalk({
                 when   : answers => {
                     return answers.reqCommand.indexOf("Run Server") > -1 || answers.reqCommand === "Run Both"
                 }
+            },
+            {
+                type   : 'confirm',
+                name   : 'watch',
+                message: 'Watch Mode: Watch for changes ( This is not HotModuleReload )?',
+                default: true,
+                when   : answers => {
+                    return answers.reqCommand.indexOf("Electron") > -1
+                }
             }
         ]).then( answers => {
 
@@ -122,7 +131,8 @@ taketalk({
                     } );
                 }
                 else if( !useServer && runElectron){
-                    this.pack.runElectronApp(); 
+                    this.pack.runElectronApp( false, answers.watch ); 
+                    this.pack.env.doMinify = answers.productionServer;
                 }
 
                 this.pack.welcome();
@@ -135,7 +145,13 @@ taketalk({
                 console.log ( "           GZip Files:", answers.isGZip ? chalk.green.bold("YES") : chalk.red.bold("NO") );
                 console.log ( "       Minified Files:", answers.doMinify ? chalk.green.bold("YES") : chalk.red.bold("NO") );
                 console.log ( "          Environment:", srv );
+                if( !useServer && runElectron ){
+                    console.log ( "     Watching Changes:", answers.watch ? chalk.green.bold("YES") : chalk.red.bold("NO") );
+                }
                 console.log ( "   ===================================\n" );
+                if( !useServer && runElectron ){
+                    console.log ( chalk.yellow("   Compiling ...") );
+                }
             }
         });
     },

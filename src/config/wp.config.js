@@ -181,6 +181,7 @@ export default function( isProductionEnvironment = false, hot = true, gziped = f
                     'SERVER_PORT': JSON.stringify( serverLocalURL.port ),
                     'SERVER_URL_FULL': JSON.stringify( serverLocalURL.full ),
                     'BS_VER'     : JSON.stringify( browseSyncVersion || false ),
+                    'IS_HOT'     : JSON.stringify( hot ),
                 }
             } ),
 

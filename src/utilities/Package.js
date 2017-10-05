@@ -10,6 +10,7 @@
 
 import path from 'path';
 import fse from 'fs-extra';
+import chalk from 'chalk';
 import inquirer from 'inquirer';
 import rx from 'rx-lite-aggregates'; 
 import browserSyncServer from 'browser-sync';
@@ -148,7 +149,42 @@ export default class Package extends DataCollector{
         } );
     }
 
-    runElectronApp(){
+    runElectronApp( isUsingServer = true, watch = false ){
+        if( !isUsingServer ){
+            let initialized = false;
+            const wpConf    = this.wpConfig( this.env.isProduction, false, false, this.env.isProduction, this.client.configFileData );
+            const compiler  = webpack( wpConf );
+            const statsConf = {colors: true,chunks: false,modules: false, children: false, hash: false};
+            const errorManager = err => { 
+                if(err) console.log( err );
+                return !!err;
+            };
+            const printStats  = stats => console.log( stats.toString(statsConf) );
+            const compileFunc = (err, stats) => {
+                if (errorManager(err)) { return; }
+                this.welcome();
+                console.log("\n");
+                printStats( stats );
+                if(!initialized){
+                    console.log(chalk.yellow("\nOpening App ..."));
+                    exec("npm run rbc::electron");
+                    initialized = true;
+                }
+                if ( watch ){
+                    console.log(chalk.yellow("\nWaiting for changes ... "));
+                }
+                else{
+                    console.log(chalk.dim("\nTo quit app: ctrl + c    ( here on console ) \n             command + q ( on the app window ) "));
+                }
+            };
+
+            compiler[ watch ? 'watch' : 'run' ]( 
+                watch ? {} : compileFunc,
+                watch ? compileFunc : null
+            );
+            return;
+        }
+        
         exec("npm run rbc::electron");
     }
 }

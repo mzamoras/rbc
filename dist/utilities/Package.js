@@ -14,6 +14,10 @@ var _fsExtra = require('fs-extra');
 
 var _fsExtra2 = _interopRequireDefault(_fsExtra);
 
+var _chalk = require('chalk');
+
+var _chalk2 = _interopRequireDefault(_chalk);
+
 var _inquirer = require('inquirer');
 
 var _inquirer2 = _interopRequireDefault(_inquirer);
@@ -199,6 +203,46 @@ var Package = function (_DataCollector) {
     }, {
         key: 'runElectronApp',
         value: function runElectronApp() {
+            var _this5 = this;
+
+            var isUsingServer = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : true;
+            var watch = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : false;
+
+            if (!isUsingServer) {
+                var initialized = false;
+                var wpConf = this.wpConfig(this.env.isProduction, false, false, this.env.isProduction, this.client.configFileData);
+                var compiler = (0, _webpack2.default)(wpConf);
+                var statsConf = { colors: true, chunks: false, modules: false, children: false, hash: false };
+                var errorManager = function errorManager(err) {
+                    if (err) console.log(err);
+                    return !!err;
+                };
+                var printStats = function printStats(stats) {
+                    return console.log(stats.toString(statsConf));
+                };
+                var compileFunc = function compileFunc(err, stats) {
+                    if (errorManager(err)) {
+                        return;
+                    }
+                    _this5.welcome();
+                    console.log("\n");
+                    printStats(stats);
+                    if (!initialized) {
+                        console.log(_chalk2.default.yellow("\nOpening App ..."));
+                        (0, _child_process.exec)("npm run rbc::electron");
+                        initialized = true;
+                    }
+                    if (watch) {
+                        console.log(_chalk2.default.yellow("\nWaiting for changes ... "));
+                    } else {
+                        console.log(_chalk2.default.dim("\nTo quit app: ctrl + c    ( here on console ) \n             command + q ( on the app window ) "));
+                    }
+                };
+
+                compiler[watch ? 'watch' : 'run'](watch ? {} : compileFunc, watch ? compileFunc : null);
+                return;
+            }
+
             (0, _child_process.exec)("npm run rbc::electron");
         }
     }]);

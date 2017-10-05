@@ -59,7 +59,7 @@ function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { de
             type: 'list',
             name: 'reqCommand',
             message: 'Which process would you like to run ?',
-            choices: ['Run Server', 'Run Electron App', 'Run Both', new _inquirer2.default.Separator(), 'ReConfigure', 'Delete Configuration and Start Over', new _inquirer2.default.Separator(), 'Compile RBC package', 'Compile RBC package Hot', new _inquirer2.default.Separator()],
+            choices: ['Run Server', 'Run Electron App', 'Run Both', new _inquirer2.default.Separator(), 'ReConfigure', 'Delete Configuration and Start Over', new _inquirer2.default.Separator(), 'Compile RBC package | One time', 'Compile RBC package | Watch Mode', new _inquirer2.default.Separator()],
             default: 0
         }, {
             type: 'confirm',
@@ -67,7 +67,7 @@ function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { de
             message: 'Do you want to run in PRODUCTION environment ?',
             default: false,
             when: function when(answers) {
-                return answers.reqCommand === "Run Server" || answers.reqCommand === "Run Both";
+                return answers.reqCommand.indexOf("Run") > -1;
             }
         }, {
             type: 'confirm',
@@ -93,6 +93,14 @@ function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { de
             when: function when(answers) {
                 return answers.reqCommand.indexOf("Run Server") > -1 || answers.reqCommand === "Run Both";
             }
+        }, {
+            type: 'confirm',
+            name: 'watch',
+            message: 'Watch Mode: Watch for changes ( This is not HotModuleReload )?',
+            default: true,
+            when: function when(answers) {
+                return answers.reqCommand.indexOf("Electron") > -1;
+            }
         }]).then(function (answers) {
 
             if (answers.reqCommand.indexOf("Run") > -1) {
@@ -117,7 +125,8 @@ function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { de
                         }, 500);
                     });
                 } else if (!useServer && runElectron) {
-                    _this.pack.runElectronApp();
+                    _this.pack.runElectronApp(false, answers.watch);
+                    _this.pack.env.doMinify = answers.productionServer;
                 }
 
                 _this.pack.welcome();
@@ -130,7 +139,13 @@ function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { de
                 console.log("           GZip Files:", answers.isGZip ? _chalk2.default.green.bold("YES") : _chalk2.default.red.bold("NO"));
                 console.log("       Minified Files:", answers.doMinify ? _chalk2.default.green.bold("YES") : _chalk2.default.red.bold("NO"));
                 console.log("          Environment:", srv);
+                if (!useServer && runElectron) {
+                    console.log("     Watching Changes:", answers.watch ? _chalk2.default.green.bold("YES") : _chalk2.default.red.bold("NO"));
+                }
                 console.log("   ===================================\n");
+                if (!useServer && runElectron) {
+                    console.log(_chalk2.default.yellow("   Compiling ..."));
+                }
             }
         });
     },

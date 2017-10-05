@@ -116,10 +116,11 @@ packsElem.development = [
     "react-helmet",
     "react-tap-event-plugin",
     "react-addons-perf",
+    "immutability-helper",
     
     //React Router
     "react-router-dom",
-    "react-router-redux",
+    "react-router-redux@next",
     
     //Redux
     "redux",
