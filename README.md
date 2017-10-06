@@ -41,7 +41,7 @@ Github automatically parses anchor tags out of your headers. So you can do the f
 When you run this package for the first time, you will be required to answer some questions in order to create the configuration file:
 * **rbc.config.js**
 
-1. Project Name
+1. Project <span style='color:#aaaaff'>Name</span>
 2. Desired Local Address
 3. Use of Proxy
 4. Auto open Chrome 
@@ -167,5 +167,39 @@ Install Laravel and create a
     * sinon
     * Jest
 
+# Using Storyboard
+|Options|Description|
+|---|---|
+|<span style="color:#EC407A;font-size:1.1em;">Servers</span>|
+|Run Server|x|
+|Run Electron App|x|
+|Run Both|x|
+|<span style="color:#EC407A;font-size:1.1em;">Testing</span>|
+|Test with Karma|x|
+|Launch Storybook|x|
+|<span style="color:#EC407A;font-size:1.1em;">Configuration</span>|
+|Re configure|x|
+|Start Over|x|
 
+---
+#### <span style="color:#EC407A;font-size:1.1em;">Running Servers</span>
+When running a server some options are configurable. The default options are configured to run as DEVELOPMENT MODE.
+
+|Option|Default|
+|---|:---:|
+|1. Run in <span style="color:#EC407A">**Production Mode**</span> ?| false |
+|2. Enable Hot Module Replacement ( <span style="color:#EC407A">**HMR**</span> ) ?| true |
+|3. Enable <span style="color:#EC407A">**gzip**</span> for compiled files ?| true |
+|4. <span style="color:#EC407A">**Minify**</span> compiled files ?| false |
+
+---
+#### <span style="color:#EC407A;font-size:1.1em;">Running Electron Only</span>
+When running Electron App the default options are configured to run as DEVELOPMENT MODE.
+
+**Note:** Running Electron only does not allow HMR, but you can use **watch mode** to lisent for changes and recompile when they happen. To Enable HMR, run Server instead.
+
+|Option|Default|
+|---|:---:|
+|1. Run in <span style="color:#EC407A">**Production Mode**</span> ?| false |
+|2. <span style="color:#EC407A">**Watch**</span> Mode ?| true |
 
