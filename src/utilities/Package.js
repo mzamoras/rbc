@@ -113,6 +113,7 @@ export default class Package extends DataCollector{
                 fse.copySync(this.rbc.templates_assets, path.resolve(this.client.configFileData.paths.src, "assets"));
                 fse.copySync(this.rbc.templates_react, path.resolve(this.client.configFileData.paths.src, "react"));
                 fse.copySync(this.rbc.templates_electron, path.resolve(this.client.configFileData.paths.src, "electron"));
+                fse.copySync(this.rbc.templates_storybook, path.resolve(this.client.configFileData.paths.src, "storybook"));
                 fse.copySync(this.rbc.templates_public, this.client.configFileData.paths.dest);
 
                 if( answers.viewBlade){
@@ -151,10 +152,10 @@ export default class Package extends DataCollector{
 
     runElectronApp( isUsingServer = true, watch = false ){
         if( !isUsingServer ){
-            let initialized = false;
-            const wpConf    = this.wpConfig( this.env.isProduction, false, false, this.env.isProduction, this.client.configFileData );
-            const compiler  = webpack( wpConf );
-            const statsConf = {colors: true,chunks: false,modules: false, children: false, hash: false};
+            let   initialized  = false;
+            const wpConf       = this.wpConfig( this.env.isProduction, false, false, this.env.isProduction, this.client.configFileData );
+            const compiler     = webpack( wpConf );
+            const statsConf    = {colors: true,chunks: false,modules: false, children: false, hash: false};
             const errorManager = err => { 
                 if(err) console.log( err );
                 return !!err;
@@ -179,8 +180,8 @@ export default class Package extends DataCollector{
             };
 
             compiler[ watch ? 'watch' : 'run' ]( 
-                watch ? {} : compileFunc,
-                watch ? compileFunc : null
+                watch ? {}         : compileFunc,
+                watch ? compileFunc: null
             );
             return;
         }

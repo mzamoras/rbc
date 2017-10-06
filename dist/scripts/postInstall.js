@@ -33,7 +33,7 @@ var packName = rbcJSONData.name;
 var prefix = "rbc::";
 
 var scripts = {
-    "// - - - React Base Project Starter Kit Scripts - - -//": "",
+    "// - - - React Base Project Starter Kit Scripts - - - //": "",
     recompile: 'rimraf ./node_modules/' + packName + '/dist && babel --presets env --plugins transform-object-rest-spread -d ./node_modules/' + packName + '/dist/ ./node_modules/' + packName + '/src/ --copy-files',
     recompileW: 'rimraf ./node_modules/' + packName + '/dist && babel --presets env --plugins transform-object-rest-spread -d ./node_modules/' + packName + '/dist/ ./node_modules/' + packName + '/src/ --copy-files -w',
     start: 'node ./node_modules/' + packName + '/dist/start.js',

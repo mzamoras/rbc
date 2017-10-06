@@ -163,6 +163,7 @@ var Package = function (_DataCollector) {
                     _fsExtra2.default.copySync(_this3.rbc.templates_assets, _path2.default.resolve(_this3.client.configFileData.paths.src, "assets"));
                     _fsExtra2.default.copySync(_this3.rbc.templates_react, _path2.default.resolve(_this3.client.configFileData.paths.src, "react"));
                     _fsExtra2.default.copySync(_this3.rbc.templates_electron, _path2.default.resolve(_this3.client.configFileData.paths.src, "electron"));
+                    _fsExtra2.default.copySync(_this3.rbc.templates_storybook, _path2.default.resolve(_this3.client.configFileData.paths.src, "storybook"));
                     _fsExtra2.default.copySync(_this3.rbc.templates_public, _this3.client.configFileData.paths.dest);
 
                     if (answers.viewBlade) {

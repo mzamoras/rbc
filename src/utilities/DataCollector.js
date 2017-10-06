@@ -74,9 +74,9 @@ export default class DataCollector{
         this.client.configFilePath  = path.resolve( this.client.path, this.fileNames.configFile );
         this.client.configFileData  = fse.pathExistsSync( this.client.configFilePath )
                                         ? require( this.client.configFilePath )(this.env.isProduction, this.env.isHot) 
-                                        :            null ;
-        this.client.srcExist = this.client.configFileData ? fse.pathExistsSync( this.client.configFileData.paths.src ) : false;
-        this.client.srcExist = this.client.configFileData ? fse.pathExistsSync( this.client.configFileData.paths.src_react ) : false;
+                                                                                                                                                            :             null ;
+                                        this.client.srcExist = this.client.configFileData ? fse.pathExistsSync( this.client.configFileData.paths.src )      : false;
+                                        this.client.srcExist = this.client.configFileData ? fse.pathExistsSync( this.client.configFileData.paths.src_react ): false;
 
         //Rbc
         this.rbc.path                = path.resolve( __dirname, "../../" );
@@ -85,6 +85,7 @@ export default class DataCollector{
         this.rbc.templates_assets    = path.resolve( this.rbc.templates_structure, "assets" );
         this.rbc.templates_views     = path.resolve( this.rbc.templates_structure, "views" );
         this.rbc.templates_electron  = path.resolve( this.rbc.templates_structure, "electron" );
+        this.rbc.templates_storybook = path.resolve( this.rbc.templates_structure, "storybook" );
         this.rbc.templates_react     = path.resolve( this.rbc.templates_structure, "react" );
         this.rbc.templates_public    = path.resolve( this.rbc.templates_structure, "public" );
         this.rbc.configTemplate      = path.resolve( this.rbc.templatesPath, this.fileNames.configTemplate );

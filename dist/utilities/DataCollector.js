@@ -104,6 +104,7 @@ var DataCollector = function () {
             this.rbc.templates_assets = _path2.default.resolve(this.rbc.templates_structure, "assets");
             this.rbc.templates_views = _path2.default.resolve(this.rbc.templates_structure, "views");
             this.rbc.templates_electron = _path2.default.resolve(this.rbc.templates_structure, "electron");
+            this.rbc.templates_storybook = _path2.default.resolve(this.rbc.templates_structure, "storybook");
             this.rbc.templates_react = _path2.default.resolve(this.rbc.templates_structure, "react");
             this.rbc.templates_public = _path2.default.resolve(this.rbc.templates_structure, "public");
             this.rbc.configTemplate = _path2.default.resolve(this.rbc.templatesPath, this.fileNames.configTemplate);
