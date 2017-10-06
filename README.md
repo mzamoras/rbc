@@ -184,7 +184,7 @@ Install Laravel and create a
 
 ---
 ## <span style="color:#EC407A;font-size:1.1em;">Running Servers</span>
-When running a server some options are configurable. The default options are configured to run as DEVELOPMENT MODE.
+When running a server some options are configurable. The default options are configured to run as **DEVELOPMENT MODE**.
 
 |Option|Default|
 |---|:---:|
