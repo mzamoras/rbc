@@ -36,6 +36,7 @@ Github automatically parses anchor tags out of your headers. So you can do the f
 1. [Main Script](#start-script-option)  
 1. [Using Proxied Server](#start-script-option)  
 1. [Using Static Server](#start-script-option)  
+1. [Running Servers](#running-servers)  
 
 # Configuration file
 When you run this package for the first time, you will be required to answer some questions in order to create the configuration file:
@@ -182,7 +183,7 @@ Install Laravel and create a
 |Start Over|x|
 
 ---
-#### <span style="color:#EC407A;font-size:1.1em;">Running Servers</span>
+## <span style="color:#EC407A;font-size:1.1em;">Running Servers</span>
 When running a server some options are configurable. The default options are configured to run as DEVELOPMENT MODE.
 
 |Option|Default|
@@ -193,7 +194,7 @@ When running a server some options are configurable. The default options are con
 |4. <span style="color:#EC407A">**Minify**</span> compiled files ?| false |
 
 ---
-#### <span style="color:#EC407A;font-size:1.1em;">Running Electron Only</span>
+## <span style="color:#EC407A;font-size:1.1em;">Running Electron Only</span>
 When running Electron App the default options are configured to run as DEVELOPMENT MODE.
 
 **Note:** Running Electron only does not allow HMR, but you can use **watch mode** to lisent for changes and recompile when they happen. To Enable HMR, run Server instead.
@@ -203,3 +204,6 @@ When running Electron App the default options are configured to run as DEVELOPME
 |1. Run in <span style="color:#EC407A">**Production Mode**</span> ?| false |
 |2. <span style="color:#EC407A">**Watch**</span> Mode ?| true |
 
+---
+## <span style="color:#EC407A;font-size:1.1em;">Testing With Karma</span>
+When running Electron App the default options are configured to run as DEVELOPMENT MODE.
