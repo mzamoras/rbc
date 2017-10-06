@@ -117,6 +117,7 @@ packsElem.development = [
     "react-tap-event-plugin",
     "react-addons-perf",
     "immutability-helper",
+    "@storybook/react",
     
     //React Router
     "react-router-dom",
