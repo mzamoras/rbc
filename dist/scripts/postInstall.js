@@ -37,7 +37,8 @@ var scripts = {
     recompileW: 'rimraf ./node_modules/' + packName + '/dist && babel --presets env --plugins transform-object-rest-spread -d ./node_modules/' + packName + '/dist/ ./node_modules/' + packName + '/src/ --copy-files -w',
     start: 'node ./node_modules/' + packName + '/dist/start.js',
     _start: 'rbc-start',
-    electron: 'node ./node_modules/' + packName + '/scripts/electron.js'
+    electron: 'node ./node_modules/' + packName + '/scripts/electron.js',
+    karma: 'NODE_ENV=test; babel-node --presets env -- ./node_modules/karma/bin/karma start ./node_modules/' + packName + '/dist/config/karma.config.js'
 };
 
 newData.scripts = newData.scripts || {};

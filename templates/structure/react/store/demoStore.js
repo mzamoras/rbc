@@ -18,7 +18,6 @@ export default function reducer( state = initialState, action = {} ) {
                 return update( state, {
                     themeStyle: { $set: action.data.newStyle }
                 });
-                return state;
             default:
                 return state;
         }
