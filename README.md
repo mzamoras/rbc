@@ -182,9 +182,9 @@ Install Laravel and create a
 |Re configure|x|
 |Start Over|x|
 
----
 ## <span style="color:#EC407A;font-size:1.1em;">Running Servers</span>
-When running a server some options are configurable. The default options are configured to run as **DEVELOPMENT MODE**.
+When running a server some options are configurable. 
+The default options are configured to run as **DEVELOPMENT MODE**.
 
 |Option|Default|
 |---|:---:|
@@ -193,9 +193,8 @@ When running a server some options are configurable. The default options are con
 |3. Enable <span style="color:#EC407A">**gzip**</span> for compiled files ?| true |
 |4. <span style="color:#EC407A">**Minify**</span> compiled files ?| false |
 
----
 ## <span style="color:#EC407A;font-size:1.1em;">Running Electron Only</span>
-When running Electron App the default options are configured to run as DEVELOPMENT MODE.
+When running Electron App the default options are configured to run as **DEVELOPMENT MODE**.
 
 **Note:** Running Electron only does not allow HMR, but you can use **watch mode** to lisent for changes and recompile when they happen. To Enable HMR, run Server instead.
 
@@ -204,6 +203,6 @@ When running Electron App the default options are configured to run as DEVELOPME
 |1. Run in <span style="color:#EC407A">**Production Mode**</span> ?| false |
 |2. <span style="color:#EC407A">**Watch**</span> Mode ?| true |
 
----
+
 ## <span style="color:#EC407A;font-size:1.1em;">Testing With Karma</span>
-When running Electron App the default options are configured to run as DEVELOPMENT MODE.
+When running Electron App the default options are configured to run as **DEVELOPMENT MODE**.
