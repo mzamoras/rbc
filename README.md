@@ -24,6 +24,7 @@ yarn add https://github.com/mzamoras/rbc
 ```sh
 npm run rbc::start
 ````
+![alt text](https://raw.githubusercontent.com/mzamoras/rbc/master/documentation/ss.png)
 
 # Index
 	
