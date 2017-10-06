@@ -171,38 +171,40 @@ Install Laravel and create a
 # Using Storyboard
 |Options|Description|
 |---|---|
-|<span style="color:#EC407A;font-size:1.1em;">Servers</span>|
+|Servers|
 |Run Server|x|
 |Run Electron App|x|
 |Run Both|x|
-|<span style="color:#EC407A;font-size:1.1em;">Testing</span>|
+|Testing|
 |Test with Karma|x|
 |Launch Storybook|x|
-|<span style="color:#EC407A;font-size:1.1em;">Configuration</span>|
+|Configuration|
 |Re configure|x|
 |Start Over|x|
 
-## <span style="color:#EC407A;font-size:1.1em;">Running Servers</span>
+## Running Servers
 When running a server some options are configurable. 
 The default options are configured to run as **DEVELOPMENT MODE**.
 
 |Option|Default|
 |---|:---:|
-|1. Run in <span style="color:#EC407A">**Production Mode**</span> ?| false |
-|2. Enable Hot Module Replacement ( <span style="color:#EC407A">**HMR**</span> ) ?| true |
-|3. Enable <span style="color:#EC407A">**gzip**</span> for compiled files ?| true |
-|4. <span style="color:#EC407A">**Minify**</span> compiled files ?| false |
+|1. Run in **Production Mode** ?| false |
+|2. Enable Hot Module Replacement ( **HMR** ) ?| true |
+|3. Enable **gzip** for compiled files ?| true |
+|4. **Minify** compiled files ?| false |
 
-## <span style="color:#EC407A;font-size:1.1em;">Running Electron Only</span>
+
+## Running Electron Only
 When running Electron App the default options are configured to run as **DEVELOPMENT MODE**.
 
-**Note:** Running Electron only does not allow HMR, but you can use **watch mode** to lisent for changes and recompile when they happen. To Enable HMR, run Server instead.
+**Note:** Running Electron only does not allow HMR, but you can use **watch mode** to listen for changes and recompile when they happen. To Enable HMR, run Server instead.
 
 |Option|Default|
 |---|:---:|
-|1. Run in <span style="color:#EC407A">**Production Mode**</span> ?| false |
-|2. <span style="color:#EC407A">**Watch**</span> Mode ?| true |
+|1. Run in **Production Mode** ?| false |
+|2. **Watch** Mode ?| true |
 
 
-## <span style="color:#EC407A;font-size:1.1em;">Testing With Karma</span>
+### Testing With Karma
+---
 When running Electron App the default options are configured to run as **DEVELOPMENT MODE**.
