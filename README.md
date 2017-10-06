@@ -8,12 +8,14 @@ Create React projects without configuration time.
 
 
 # Quick Overview
-Create a New folder or open the folder where you want this package installed.
+Create a New folder or open the folder where you want this package installed. Then cd into your project.
+```
+cd Users\MyUser\MyFolder\MyProjectDir
+```
 
-1. Create your **package.json** file if not created already, 
 ```sh
 
-#1.Create your package.json file if not created already, 
+#1. Create your package.json file if not created already.
 npm init -y
 
 #2. Add this package to dependencies
@@ -24,15 +26,6 @@ npm run rbc::start
 
 ````
 
-2. Add this package to dependencies
-```sh
-yarn add https://github.com/mzamoras/rbc
-```
-
-3. Run the **React Base Project**
-```sh
-npm run rbc::start
-````
 ![alt text](https://raw.githubusercontent.com/mzamoras/rbc/master/documentation/ss.png)
 
 # Index
