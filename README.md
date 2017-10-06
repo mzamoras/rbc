@@ -209,3 +209,24 @@ When running Electron App the default options are configured to run as **DEVELOP
 
 ## Testing With Karma
 When running Electron App the default options are configured to run as **DEVELOPMENT MODE**.
+
+# Available Scripts
+Once you install this package, some scripts become available in your package.json file, the
+easiest way to run this package is to run the **Main Script**.
+```sh
+    npm run rbc::start
+```
+
+But when you have run the **Main Script** at least once, you will be able to call some of the scripts directly, this are the scripts available:
+
+|Script|Description|
+|---|---|
+|rbc::start| This is the main script |
+|rbc::storybook| Runs a server to view your stories |
+|rbc::storybook| Runs a server to view your stories |
+|rbc::electron| Runs directly the Electron App ( may run with errors ) |
+|rbc::recompile| If you decide to modify this package in your node_modules you need to recompile everything in order to make it work. |
+|rbc::recompileW| Same as rbc:compile but works in watch mode. |
+
+**Important**:
+Modifying this package and recompiling is **not recommended**, any change you made is in risk to be wiped as soon as you install new packages or update this one. **Use it carefully**
