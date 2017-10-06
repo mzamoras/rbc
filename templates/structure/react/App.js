@@ -2,6 +2,7 @@
 import React from 'react';
 import {ThemeProvider} from 'react-jss'
 import defaultTheme from './themes/default';
+import '../assets/less/app.less';
 
 //Replace with your component
 import RbcWelcome from './components/rbc/RbcWelcome';

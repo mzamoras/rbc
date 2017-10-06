@@ -24,11 +24,12 @@ const packName = rbcJSONData.name;
 const prefix   = "rbc::";
 
 const scripts ={
+    "// - - - React Base Project Starter Kit Scripts - - -//": "",
     recompile : `rimraf ./node_modules/${packName}/dist && babel --presets env --plugins transform-object-rest-spread -d ./node_modules/${packName}/dist/ ./node_modules/${packName}/src/ --copy-files`,
     recompileW: `rimraf ./node_modules/${packName}/dist && babel --presets env --plugins transform-object-rest-spread -d ./node_modules/${packName}/dist/ ./node_modules/${packName}/src/ --copy-files -w`,
     start     : `node ./node_modules/${packName}/dist/start.js`,
-    _start    : `rbc-start`,
     electron  : `node ./node_modules/${packName}/scripts/electron.js`,
+    storybook : `start-storybook -p 9001 -c ./resources/storybook`,
     karma     : `NODE_ENV=test; babel-node --presets env -- ./node_modules/karma/bin/karma start ./node_modules/${packName}/dist/config/karma.config.js`,
 };
 
