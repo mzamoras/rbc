@@ -12,7 +12,16 @@ Create a New folder or open the folder where you want this package installed.
 
 1. Create your **package.json** file if not created already, 
 ```sh
+
+#1.Create your package.json file if not created already, 
 npm init -y
+
+#2. Add this package to dependencies
+yarn add https://github.com/mzamoras/rbc
+
+#3. Run the React Base Project
+npm run rbc::start
+
 ````
 
 2. Add this package to dependencies
@@ -205,6 +214,5 @@ When running Electron App the default options are configured to run as **DEVELOP
 |2. **Watch** Mode ?| true |
 
 
-### Testing With Karma
----
+## Testing With Karma
 When running Electron App the default options are configured to run as **DEVELOPMENT MODE**.
