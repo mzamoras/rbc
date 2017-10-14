@@ -21,7 +21,7 @@ var _extends = Object.assign || function (target) { for (var i = 1; i < argument
 exports.default = function (isProductionEnvironment, hot, custom, gziped, bundle) {
 
     var hasProxy = !!custom.base.proxyURL;
-    var isStatic = custom.base.useStaticHTML || hasProxy ? false : true;
+    var isStatic = custom.base.useStaticHTML || (hasProxy ? false : true);
     var allowCrossOrigin = custom.base.allowCrossOrigin;
 
     var serverLocalURL = (0, _getURLData2.default)(custom.base.localURL);
@@ -29,7 +29,7 @@ exports.default = function (isProductionEnvironment, hot, custom, gziped, bundle
 
     var mainPort = parseInt(serverLocalURL.port, 10);
     var uiPort = mainPort - 1;
-    var socketPort = mainPort - 2;
+    var socketPort = !!custom.base.proxyURL ? mainPort - 2 : mainPort;
 
     var mainFolderName = _path2.default.basename(custom.paths.src);
     var destFolderName = _path2.default.basename(custom.paths.dest);
@@ -62,12 +62,13 @@ exports.default = function (isProductionEnvironment, hot, custom, gziped, bundle
             proxyOptions: {
                 xfwd: true
             }
-        },
+        }
+    }, {
+
         socket: {
             port: socketPort,
             domain: serverLocalURL.simple + ':' + socketPort
-        }
-    }, {
+        },
 
         middleware: [(0, _webpackDevMiddleware2.default)(bundle, {
             publicPath: serverLocalURL.full + "/",

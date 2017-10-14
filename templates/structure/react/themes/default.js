@@ -1,3 +1,4 @@
+import createMuiTheme from 'material-ui/styles/createMuiTheme';
 
 export default function( style = "light" ){
     const theme =  {
@@ -18,12 +19,10 @@ export default function( style = "light" ){
                 secondaryColor: "rgba(3,169,244 ,1)"
             }
         },
-        currentStyle:{
-
-        }
-    }
+        currentStyle:{}
+    };
 
     theme.currentStyle = theme.themeStyle[style];
 
-    return theme;
+    return createMuiTheme(theme);
 }

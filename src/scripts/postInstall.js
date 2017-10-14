@@ -8,42 +8,31 @@
  * Copyright 2014-present. | All rights reserved.
  */
 
-import fse from "fs-extra";
-import path from 'path';
+
 import { exec } from 'child_process';
+import DataReader from '../utilities/DataReader';
 
-const rbcPath        = path.resolve( __dirname, "../../" );
-const clientPath     = path.resolve( rbcPath, "../../" );
-const rbcJSON        = path.resolve( rbcPath, "package.json" );
-const clientJSON     = path.resolve( clientPath, 'package.json' );
-const rbcJSONData    = fse.readJsonSync( rbcJSON, { throws: false } );
-const clientJSONData = fse.readJsonSync( clientJSON, { throws: false } ) || null;
+const dataReader = new DataReader();
 
-const newData  = clientJSONData ? clientJSONData : {};
-const packName = rbcJSONData.name;
-const prefix   = "rbc::";
 
-const scripts ={
-    "// - - - React Base Project Starter Kit Scripts - - - //": "",
-    recompile : `rimraf ./node_modules/${packName}/dist && babel --presets env --plugins transform-object-rest-spread -d ./node_modules/${packName}/dist/ ./node_modules/${packName}/src/ --copy-files`,
-    recompileW: `rimraf ./node_modules/${packName}/dist && babel --presets env --plugins transform-object-rest-spread -d ./node_modules/${packName}/dist/ ./node_modules/${packName}/src/ --copy-files -w`,
-    start     : `node ./node_modules/${packName}/dist/start.js`,
-    electron  : `node ./node_modules/${packName}/scripts/electron.js`,
-    storybook : `start-storybook -p 9001 -c ./resources/storybook`,
-    karma     : `NODE_ENV=test; babel-node --presets env -- ./node_modules/karma/bin/karma start ./node_modules/${packName}/dist/config/karma.config.js`,
-};
+if( !!dataReader.json.client ){
 
-newData.scripts    = newData.scripts || {};
-newData.configDate = new Date();
+    const packName = dataReader.json.rbc.name;
 
-for (var key in scripts) {
-    if (scripts.hasOwnProperty(key)) {
-        newData.scripts[`${prefix}${key}`] = scripts[key];
-    }
-}
+    const scripts ={
+        "// - - - React Base Project Starter Kit Scripts - - - //": "",
+        recompile : `rimraf ./node_modules/${packName}/dist && babel --presets env --plugins transform-object-rest-spread -d ./node_modules/${packName}/dist/ ./node_modules/${packName}/src/ --copy-files`,
+        recompileW: `rimraf ./node_modules/${packName}/dist && babel --presets env --plugins transform-object-rest-spread -d ./node_modules/${packName}/dist/ ./node_modules/${packName}/src/ --copy-files -w`,
+        start     : `node ./node_modules/${packName}/dist/start.js`,
+        electron  : `node ./node_modules/${packName}/scripts/electron.js`,
+        storybook : `start-storybook -p 9001 -c ./resources/storybook`,
+        karma     : `cross-env NODE_ENV=karma-test node ./node_modules/${packName}/dist/scripts/testConfig.js`,
+        jest      : `cross-env NODE_ENV=jest-test node ./node_modules/${packName}/dist/scripts/testConfig.js`,
+    };
+    
+    dataReader.addClientScript( null, scripts );
+    dataReader.saveClientPackageJson();
 
-if( clientJSONData ){
-    fse.writeJSONSync( clientJSON, newData, { spaces: 4 } );
 }
 else{
     console.log( 'SCRIPT MEANT TO BE RUN BY CLIENT' );

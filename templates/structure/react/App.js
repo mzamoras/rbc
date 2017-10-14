@@ -1,6 +1,6 @@
 
 import React from 'react';
-import {ThemeProvider} from 'react-jss'
+import MuiThemeProvider from 'material-ui/styles/MuiThemeProvider';
 import defaultTheme from './themes/default';
 import '../assets/less/app.less';
 
@@ -25,9 +25,9 @@ class App extends React.Component{
 
     render(){    
         return(
-            <ThemeProvider theme={ defaultTheme( this.state.themeStyle ) }>
+            <MuiThemeProvider theme={ defaultTheme( this.state.themeStyle ) }>
                 <RbcWelcome handleThemeChange={this.handleThemeChange} themeStyle={this.state.themeStyle}/>
-            </ThemeProvider>    
+            </MuiThemeProvider>    
         );
     }
 }

@@ -18,6 +18,10 @@ var _wp = require('./wp.config');
 
 var _wp2 = _interopRequireDefault(_wp);
 
+var _DataReader = require('../utilities/DataReader');
+
+var _DataReader2 = _interopRequireDefault(_DataReader);
+
 var _getURLData = require('../utilities/getURLData');
 
 var _getURLData2 = _interopRequireDefault(_getURLData);
@@ -26,26 +30,26 @@ function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { de
 
 function _defineProperty(obj, key, value) { if (key in obj) { Object.defineProperty(obj, key, { value: value, enumerable: true, configurable: true, writable: true }); } else { obj[key] = value; } return obj; }
 
-var rbcPath = _path2.default.resolve(__dirname, "../../");
-var clientPath = _path2.default.resolve(rbcPath, "../../");
-var clientConfig = _path2.default.resolve(clientPath, 'rbc.config.js');
-var configData = require(clientConfig)(false, false);
+var dataReader = new _DataReader2.default();
+
+var configData = dataReader.config;
 var localURLData = (0, _getURLData2.default)(configData.base.localURL);
 var localPort = parseInt(localURLData.port) - 3;
 
 var wpConfigSettings = (0, _wp2.default)(false, false, false, false, configData);
 var karmaWebpackConfig = {
-        devtool: wpConfigSettings.devtool,
+        devtool: "eval",
         resolve: wpConfigSettings.resolve,
         resolveLoader: wpConfigSettings.resolveLoader,
         module: _extends({}, wpConfigSettings.module.noParse && { noParse: wpConfigSettings.module.noParse }, {
                 loaders: wpConfigSettings.module.loaders || []
-        })
+        }),
+        plugins: wpConfigSettings.plugins.slice(8, 10) //Adding CSS Extraction
 };
 
 var appPath = {
         tests: _path2.default.resolve(configData.paths.src_react, "tests"),
-        testsFile: _path2.default.resolve(configData.paths.src_react, "tests/index.config.js")
+        testsFile: _path2.default.resolve(configData.paths.src_react, "tests/configuration/karma.index.js")
 };
 
 module.exports = function (config) {

@@ -20,7 +20,7 @@ import getURLData from '../utilities/getURLData.js';
 export default function( isProductionEnvironment, hot, custom, gziped, bundle ){
 
     const hasProxy         = !!custom.base.proxyURL;
-    const isStatic         = custom.base.useStaticHTML || hasProxy ? false :  true;
+    const isStatic         = custom.base.useStaticHTML || (hasProxy ? false :  true);
     const allowCrossOrigin = custom.base.allowCrossOrigin;
 
     const serverLocalURL = getURLData( custom.base.localURL );
@@ -28,7 +28,7 @@ export default function( isProductionEnvironment, hot, custom, gziped, bundle ){
 
     const mainPort   = parseInt( serverLocalURL.port, 10 );
     const uiPort     = mainPort -1;
-    const socketPort = mainPort -2
+    const socketPort = !!custom.base.proxyURL ? mainPort -2 : mainPort;
 
     const mainFolderName     = path.basename( custom.paths.src );
     const destFolderName     = path.basename( custom.paths.dest );
@@ -80,13 +80,14 @@ export default function( isProductionEnvironment, hot, custom, gziped, bundle ){
                     proxyOptions: {
                         xfwd: true,
                     }
-                },
-                socket:{
-                    port: socketPort,
-                    domain: `${serverLocalURL.simple}:${socketPort}`
                 }
             } 
         ),
+
+        socket:{
+            port: socketPort,
+            domain: `${serverLocalURL.simple}:${socketPort}`
+        },
 
         middleware: [
             webpackDevMiddleware( bundle, {

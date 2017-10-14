@@ -4,31 +4,30 @@ import fse from "fs-extra";
 import path from 'path';
 import webpack from 'webpack';
 import wpConfig from './wp.config'
+import DataReader from '../utilities/DataReader';
 import getURLData from '../utilities/getURLData';
 
-const rbcPath      = path.resolve( __dirname, "../../" );
-const clientPath   = path.resolve( rbcPath, "../../" );
-const clientConfig = path.resolve( clientPath, 'rbc.config.js' );
-const configData   = require(clientConfig)(false, false);
+const dataReader = new DataReader();
+
+const configData   = dataReader.config;
 const localURLData = getURLData(configData.base.localURL);
 const localPort    = parseInt(localURLData.port) - 3;
 
-
-
 const wpConfigSettings   = wpConfig( false, false, false, false, configData );
 const karmaWebpackConfig = {
-    devtool      : wpConfigSettings.devtool,
+    devtool      : "eval",
     resolve      : wpConfigSettings.resolve,
     resolveLoader: wpConfigSettings.resolveLoader,
     module       : {
         ...(wpConfigSettings.module.noParse && {noParse: wpConfigSettings.module.noParse }),
         loaders: wpConfigSettings.module.loaders  || [],
-    }
+    },
+    plugins: wpConfigSettings.plugins.slice(8,10) //Adding CSS Extraction
 }
 
 const appPath = {
     tests    : path.resolve( configData.paths.src_react, "tests"),
-    testsFile: path.resolve( configData.paths.src_react, "tests/index.config.js"),
+    testsFile: path.resolve( configData.paths.src_react, "tests/configuration/karma.index.js"),
 };
 
 module.exports = function( config ){

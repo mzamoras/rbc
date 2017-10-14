@@ -54,6 +54,7 @@ packsElem.loaders = [
     "postcss-flexbugs-fixes",
     "react-hot-loader",
     "karma-sourcemap-loader",
+    "raw-loader"
 ];
 
 packsElem.webpack = [
@@ -96,7 +97,11 @@ packsElem.test = [
     "karma-sinon",
     "karma-webpack",
     "karma-sourcemap-loader",
-    "redux-mock-store"
+    "redux-mock-store",
+    "enzyme",
+    "expect-enzyme",
+    "enzyme-adapter-react-16",
+    "react-test-renderer"
 ];
 
 
@@ -130,6 +135,8 @@ packsElem.development = [
     "redux-thunk",
 ];
 
+//const deps = 
+
 let res2 = [];
 for (var key in packsElem) {
     if (packsElem.hasOwnProperty(key)) {
@@ -141,7 +148,40 @@ for (var key in packsElem) {
 }
 
 
+function joinDepsInArray( givenArray, isDev = false ){
 
-console.log( "--- yarn add (" + res2.length +")--" );
-console.log( res2.join(" ") );
-console.log( "---------------" );
+    let resultingArray = [];
+
+    if(Array.isArray(givenArray)){
+        
+        givenArray.forEach(function(element) {
+            resultingArray = resultingArray.concat( element );
+        }, this);
+        
+    }
+    else{
+
+        for (var key in givenArray) {
+            if (givenArray.hasOwnProperty(key)) {
+                var element = givenArray[key];
+                for (let index = 0; index < givenArray[key].length; index++) {
+                    resultingArray.push( givenArray[key][index] );
+                }        
+            }
+        }
+        
+    }
+
+    console.log( "--- yarn add "+ (isDev ? "--dev " : "")  +"(" + resultingArray.length +")--" );
+    console.log(resultingArray.join(" "));
+    console.log( "---------------" ); 
+}
+
+
+/* console.log( "--- yarn add (" + res2.length +")--" );
+console.log( res2.join(" \n") );
+console.log( "---------------" ); */
+//joinDepsInArray( packsElem )
+joinDepsInArray( [packsElem.babel, packsElem.test, packsElem.], true );
+joinDepsInArray( packsElem.development, false );
+//console.log( joinDepsInArray( packsElem ) );

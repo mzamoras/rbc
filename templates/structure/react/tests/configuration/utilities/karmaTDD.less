@@ -1,0 +1,69 @@
+/**
+ * File: karmaTDD.less | Package: React Base Starter Project
+ * 
+ * This source code is licensed under the MIT license found in the
+ * LICENSE file in the root directory of this source tree
+ * 
+ * CapitalMental && BackLogics Technologies
+ * Copyright 2014-present. | All rights reserved.
+ */
+
+ @import (css)url('https://fonts.googleapis.com/icon?family=Material+Icons');
+ @import url('https://fonts.googleapis.com/css?family=Roboto:300,400,400i,500,500i,700');
+  
+ @import (css)"../../../../../node_modules/html5-boilerplate/dist/css/normalize.css";
+ 
+ html, body{
+     margin:0; 
+     padding: 0;
+     width: 100%;
+     height: 100%;
+     background-color: #F2F2F2;
+     font-family: "Roboto";
+     font-size: 12px;
+ }
+ #__tddMainContainer__{
+     width: 100%;
+     height: ~"calc( 100% - 40px)";
+     margin-top: 60px;
+     position: relative;
+ }
+ 
+ .__tddMainTitle__{
+     border-bottom:1px solid #CCC;
+     position: absolute;
+     top:0; 
+     left: 0; 
+     width: 100%;
+     text-align: center;
+     font-size: 16px;
+     letter-spacing: -0.025em;
+     display: flex;
+     align-items: center;
+     justify-content: center;
+     height: 40px;
+ }
+ .__tddChildContainer__{
+     position: relative;
+     border: 2px dashed #CC0000;
+     margin: 30px;
+     padding: 40px;
+ 
+     &:after{
+         background-color: #AAA;
+         content: "Test Case";
+         position: absolute;
+         height: 20px;
+         padding: 0 20px;
+         right: -2px;
+         bottom: -22px;
+         display: flex;
+         align-items: center;
+         font-weight: 400;
+         font-family: "Roboto";
+         font-size: 10px;
+         text-transform: uppercase;
+         color: #EEE;
+     }
+ }
+ 
