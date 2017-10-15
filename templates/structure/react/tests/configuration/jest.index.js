@@ -9,7 +9,12 @@
  */
 
 module.exports = {
-    verbose:true,
-    transform: {"^.+\\.js$": "./jest.transform.js"}
+    verbose  : true,
+    rootDir  : "../../",
+    transform: {
+        "^.+\\.(css|less)$": "./tests/configuration/jest.mock.js",
+        "^.+\\.jsx?$"      : "./tests/configuration/jest.transform.js"
+    },
+    testMatch: ['**/__tests__/**/*.jest.js?(x)', '**/?*.jest.(test|spec).js?(x)'],
 }
 

@@ -13,10 +13,6 @@ import webpackDevMiddleware from 'webpack-dev-middleware';
 import webpackHotMiddleware from 'webpack-hot-middleware';
 import getURLData from '../utilities/getURLData.js';
 
-/* export default function(){
-    console.log("BS CONFIG");
-} */
-
 export default function( isProductionEnvironment, hot, custom, gziped, bundle ){
 
     const hasProxy         = !!custom.base.proxyURL;

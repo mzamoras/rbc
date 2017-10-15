@@ -38,7 +38,8 @@
     }
     else if( TEST === JEST ){
         selectedTest = "rbc::jest";
-        dataReader.addClientScript( 'jest', `cross-env NODE_ENV=jest-test jest --config ${testDir} || true` );
+        dataReader.addClientScript( 'jest', `jest --config ${testDir} --no-cache` );
+        dataReader.addClientScript( 'jestWatch', `jest --config ${testDir} --no-cache --watchAll` );
     }
 
     dataReader.saveClientPackageJson();

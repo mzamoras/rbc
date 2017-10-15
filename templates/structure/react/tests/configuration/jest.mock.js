@@ -1,5 +1,5 @@
 /**
- * File: some.css | Package: React Base Starter Project
+ * File: jest.mock.js | Package: React Base Starter Project
  * 
  * This source code is licensed under the MIT license found in the
  * LICENSE file in the root directory of this source tree
@@ -8,7 +8,8 @@
  * Copyright 2014-present. | All rights reserved.
  */
 
-/** 
-* In this folder you can place any vendor or individual css to 
-* be imported on your project
-*/
+module.exports = {
+    process() {
+      return ''
+    }
+}

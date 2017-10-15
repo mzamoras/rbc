@@ -51,6 +51,12 @@ taketalk({
                     `Run Electron App`,
                     `Run Both`,
                     new inquirer.Separator(),
+                    `Storybook`,
+                    `Test with Karma`,
+                    `Test with karma | Watch Mode`,
+                    `Test with Jest`,
+                    `Test with Jest | Watch Mode`,
+                    new inquirer.Separator(),
                     `ReConfigure` ,
                     `Delete Configuration and Start Over` ,
                     new inquirer.Separator(),
@@ -153,6 +159,15 @@ taketalk({
                     console.log ( chalk.yellow("   Compiling ...") );
                 }
             }
+
+            if( answers.reqCommand.indexOf("Test") > -1 || answers.reqCommand.indexOf("Storybook") > -1){
+                this.pack.runTest(answers.reqCommand);
+            }
+
+            if( answers.reqCommand.indexOf("Compile") > -1){
+                this.pack.runRecompile( answers.reqCommand );
+            }
+
         });
     },
 

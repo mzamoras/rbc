@@ -8,6 +8,27 @@
  * Copyright 2014-present. | All rights reserved.
  */
 
-module.exports = require('babel-jest').createTransformer({
-    presets: ['env', 'react', 'stage-2'], // or whatever
-});
+module.exports = require('babel-jest').createTransformer( {
+    "presets": [
+        ["env", {
+          "targets": {
+            "node": "current"
+          }
+        }],
+        "stage-2",
+        "react"
+      ],
+    "env": {
+        "test": {
+          "presets": [
+            ["env", {
+              "targets": {
+                "node": "current"
+              }
+            }],
+            "stage-2",
+            "react"
+          ]
+        }
+    }
+} );

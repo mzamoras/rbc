@@ -23,11 +23,11 @@ export class DomNodeManager{
         }
     }
 
-    constructor(){
+    constructor( injectStyles = true ){
         
         this.body  = document.body;
-        this.style = require('css-loader!less-loader!../utilities/karmaTDD.less');
-
+        this.style = injectStyles ?  require('css-loader!less-loader!../utilities/karmaTDD.less') : '';
+        
         if( !_mainNode) {
             const mNode = document.getElementById( this.defaults.main_id )
             if( !mNode ){
