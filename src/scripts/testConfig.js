@@ -35,6 +35,7 @@
     if( TEST === KARMA ){
         selectedTest = "rbc::karma";
         dataReader.addClientScript( 'karma', `cross-env NODE_ENV=karma-test babel-node --presets env -- ${nodeBin}karma start ${pack}/dist/config/karma.config.js` );
+        dataReader.addClientScript( 'karmaWatch', `cross-env NODE_ENV=karma-test babel-node --presets env -- ${nodeBin}karma start ${pack}/dist/config/karma.config.js --watchAll` );
     }
     else if( TEST === JEST ){
         selectedTest = "rbc::jest";

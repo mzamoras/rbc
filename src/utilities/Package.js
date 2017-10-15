@@ -17,7 +17,7 @@ import browserSyncServer from 'browser-sync';
 import webpack from 'webpack';
 import gzipConnect from 'connect-gzip-static';
 import DataCollector from './DataCollector';
-import { exec } from 'child_process';
+import { exec, spawnSync } from 'child_process';
 
 export default class Package extends DataCollector{
 
@@ -187,5 +187,35 @@ export default class Package extends DataCollector{
         }
         
         exec("npm run rbc::electron");
+    }
+
+    runTest( comm ){
+        const watch = comm.indexOf("Watch") > -1;
+        let select = "";
+
+        if( comm.indexOf("Karma") > -1){
+            select = watch ? "rbc::karmaWatch" : "rbc::karma";
+        }
+        else if( comm.indexOf("Jest") > -1 ){
+            select = watch ? "rbc::jestWatch" : "rbc::jest";
+
+        }
+        else{
+            select = "rbc::storybook";
+        }
+
+        spawnSync("npm",[
+            'run',
+            select
+        ], { stdio:'inherit' });
+
+    }
+
+    runRecompile( comm ){
+        const watch = comm.indexOf("Watch") > -1;
+        spawnSync("npm",[
+            'run',
+            watch ? "rbc::recompileW" : "rbc::recompile"
+        ], { stdio:'inherit' });
     }
 }

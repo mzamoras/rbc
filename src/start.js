@@ -53,7 +53,7 @@ taketalk({
                     new inquirer.Separator(),
                     `Storybook`,
                     `Test with Karma`,
-                    `Test with karma | Watch Mode`,
+                    `Test with Karma | Watch Mode`,
                     `Test with Jest`,
                     `Test with Jest | Watch Mode`,
                     new inquirer.Separator(),
