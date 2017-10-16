@@ -78,7 +78,7 @@ describe("Testing <RbcWelcome/>", ()=>{
     })
 });
 
-describe( "App is saved to __screenshots__", ()=>{
+describe( "App is saved to __snapshots__", ()=>{
     it("..", ()=>{
         const component = renderer.create(
             <App/>
