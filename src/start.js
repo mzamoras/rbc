@@ -168,6 +168,10 @@ taketalk({
                 this.pack.runRecompile( answers.reqCommand );
             }
 
+            if( answers.reqCommand.indexOf("Config") > -1){
+                this.pack.runReset( answers.reqCommand );
+            }
+
         });
     },
 

@@ -10,6 +10,8 @@
 
 import path from 'path';
 import fse from 'fs-extra';
+import rimraf from 'rimraf';
+import glob from 'glob';
 import chalk from 'chalk';
 import inquirer from 'inquirer';
 import rx from 'rx-lite-aggregates'; 
@@ -217,5 +219,88 @@ export default class Package extends DataCollector{
             'run',
             watch ? "rbc::recompileW" : "rbc::recompile"
         ], { stdio:'inherit' });
+    }
+
+    runReset( comm ){
+        
+        const reader = new DataReader();
+        const reset = comm.indexOf("Delete") > -1;
+        
+        if( reset ){
+            console.log( chalk.red.bold('\n -------------------------------------') );
+            console.log( chalk.red.bold(' I M P O R T A N T :') );
+            console.log( chalk.red.bold(' This could potentially lead to loss of') );
+            console.log( chalk.red.bold(' your important files. All Folders created ') );
+            console.log( chalk.red.bold(' with this tool will be deleted. Be sure to') );
+            console.log( chalk.red.bold(' backup your important files first.') );
+            console.log( chalk.red.bold(' -------------------------------------\n') );
+        }
+        else{
+            console.log( chalk.red.bold('\n -------------------------------------') );
+            console.log( chalk.red.bold(' I M P O R T A N T :') );
+            console.log( chalk.red.bold(' This will delete your configuration file') );
+            console.log( chalk.red.bold(' if you are unsure of this make a backup ') );
+            console.log( chalk.red.bold(' of this file first.') );
+            console.log( chalk.red.bold(' -------------------------------------\n') );
+        }
+
+        const observe = rx.Observable.create( obs => {
+            obs.onNext({
+                type   : 'confirm',
+                name   : 'config',
+                message: chalk.red.bold(' Are you suer you want to delete your configuration file ( rbc.config.js ) ?'),
+                when: !reset,
+                default: false,
+            });
+
+            obs.onNext({
+                type   : 'confirm',
+                name   : 'reset',
+                message: chalk.red.bold(' Are you suer you want to delete your configurtion file and template files ?'),
+                default: false,
+                when   : reset
+            });
+        
+            obs.onCompleted();
+        });
+
+        inquirer.prompt(observe).then( answers => {
+            if( !!answers.reset ){
+                
+                const files = glob.sync("**/*.*", {
+                    cwd: this.rbc.templatesPath
+                });
+
+                files.push( this.client.configFilePath );
+                
+                files.forEach( f =>{
+                    const fName = f.replace("structure/", this.client.configFileData.paths.src + "/");
+                    try{
+                        fse.unlinkSync( fName )
+                        console.log( chalk.yellow('Deleted'), chalk.dim(fName));
+                    }
+                    catch(e){}
+                } );
+
+                rimraf( path.resolve(this.client.configFileData.paths.src, "react"), ()=>{} );
+                rimraf( path.resolve(this.client.configFileData.paths.src, "electron"), ()=>{} );
+                rimraf( path.resolve(this.client.configFileData.paths.src, "storybook"), ()=>{} );
+                rimraf( path.resolve(this.client.configFileData.paths.src, "public"), ()=>{} );
+
+                return;
+            }
+
+            if( !!answers.config ){
+                try{
+                    fse.unlinkSync( this.client.configFilePath);
+                    console.log( chalk.yellow('Deleted'), chalk.dim(this.client.configFilePath));
+                }
+                catch(e){}
+                return;
+
+            }
+            
+            console.log( chalk.yellow('Nothing was deleted!!') );
+        });
     }
 }

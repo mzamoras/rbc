@@ -15,6 +15,7 @@ import wpConfig from './wp.config'
 import DataReader from '../utilities/DataReader';
 import getURLData from '../utilities/getURLData';
 
+const args = process.argv.slice(2);
 const dataReader = new DataReader();
 
 const configData   = dataReader.config;
@@ -22,6 +23,8 @@ const localURLData = getURLData(configData.base.localURL);
 const localPort    = parseInt(localURLData.port) - 3;
 
 const wpConfigSettings   = wpConfig( false, false, false, false, configData );
+const watchMode = args.indexOf("--watchAll") > -1 ? "true" : false;
+
 const karmaWebpackConfig = {
     devtool      : "eval",
     resolve      : wpConfigSettings.resolve,
@@ -112,7 +115,7 @@ module.exports = function( config ){
         
                 // Continuous Integration mode
                 // if true, Karma captures browsers, runs the tests and exits
-                singleRun: false,
+                singleRun: !watchMode,
         
                 // Concurrency level
                 // how many browser should be started simultaneous
