@@ -82,7 +82,8 @@ export default class Package extends DataCollector{
             .replace( /\%LOCAL_ADDRESS\%/g, answers.projectAddress )
             .replace( /\%PROXY_ADDRESS\%/g, answers.useProxy ? answers.proxyAddress : answers.projectAddress )
             .replace( /\/\/USE_PROXY\/\//g, answers.useProxy ? "" : "//" )
-            .replace( /false\,\/\/OPEN_CHROME\/\//g, answers.autoOpenChrome ? "true" : "false" );
+            .replace( /false\,\/\/OPEN_CHROME\/\//g, answers.autoOpenChrome ? "true" : "false" )
+            .replace( /true\,\/\/USE_STATIC\/\//g, answers.useProxy ? "false" : "true" );
 
             fse.outputFileSync(this.client.configFilePath, clientConf); 
             
