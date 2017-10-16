@@ -75,8 +75,8 @@ export default class DataCollector{
         this.client.configFileData  = fse.pathExistsSync( this.client.configFilePath )
                                         ? require( this.client.configFilePath )(this.env.isProduction, this.env.isHot) 
                                                                                                                                                             :             null ;
-                                        this.client.srcExist = this.client.configFileData ? fse.pathExistsSync( this.client.configFileData.paths.src )      : false;
-                                        this.client.srcExist = this.client.configFileData ? fse.pathExistsSync( this.client.configFileData.paths.src_react ): false;
+        this.client.srcExist = this.client.configFileData ? fse.pathExistsSync( this.client.configFileData.paths.src )      : false;
+        this.client.srcExist = this.client.configFileData ? fse.pathExistsSync( this.client.configFileData.paths.src_react ): false;
 
         //Rbc
         this.rbc.path                = path.resolve( __dirname, "../../" );
