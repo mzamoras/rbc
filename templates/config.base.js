@@ -46,7 +46,7 @@ module.exports = function( isProductionEnvironment, isHotModuleReloadEnabled ){
         localURL         : "%LOCAL_ADDRESS%",
         //USE_PROXY//proxyURL        : "%PROXY_ADDRESS%",
         allowCrossOrigin: isProductionEnvironment,
-        useStaticHTML   : true,
+        useStaticHTML   : true,//USE_STATIC//,
         autoOpenChrome  : false,//OPEN_CHROME//,
 
         sslCert         : {
