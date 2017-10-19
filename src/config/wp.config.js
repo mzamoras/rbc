@@ -64,7 +64,7 @@ export default function( isProductionEnvironment = false, hot = true, gziped = f
                     enforce: "pre",
                     options: {
                         configFile : path.resolve( __dirname, "./eslint.conf.js" ),
-                        useEslintrc: false
+                        useEslintrc: true
                     }
                 }, 
 
