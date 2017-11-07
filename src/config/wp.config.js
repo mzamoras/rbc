@@ -33,6 +33,7 @@ export default function( isProductionEnvironment = false, hot = true, gziped = f
     const serverLocalURL    = getURLData( custom.base.localURL );
     const serverLocalProxy  = custom.base.proxyURL ? getURLData( custom.base.proxyURL ) : null;
     const browseSyncVersion = pJson.dependencies['browser-sync'].replace( "^", "" );
+    const _useEslintrc       = custom.wp.eslintUsage.useEslintrc;
 
     const config = {
         
@@ -63,8 +64,8 @@ export default function( isProductionEnvironment = false, hot = true, gziped = f
                     include: [custom.paths.src_js, custom.paths.src_react],
                     enforce: "pre",
                     options: {
-                        configFile : path.resolve( __dirname, "./eslint.conf.js" ),
-                        useEslintrc: true
+                        ...( !_useEslintrc && { configFile : path.resolve( __dirname, "./eslint.conf.js" ) } ),
+                        useEslintrc: _useEslintrc
                     }
                 }, 
 

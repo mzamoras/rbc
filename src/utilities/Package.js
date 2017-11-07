@@ -134,6 +134,9 @@ export default class Package extends DataCollector{
     startServer(){
         return new Promise( (resolve, reject) =>{
             
+            //Delete old files
+            this.deleteOldPublicFiles();
+
             const wpConf = this.wpConfig( this.env.isProduction, this.env.isHot, this.env.isGZip, this.env.doMinimize, this.client.configFileData );
             const bsConf = this.bsConfig( this.env.isProduction, this.env.isHot, this.client.configFileData, this.env.isGZip, webpack( wpConf ) );
     
@@ -141,8 +144,8 @@ export default class Package extends DataCollector{
             
             browserSync.init( bsConf, ( err, bs ) =>{
     
-                if( this.env.isProduction || this.env.isGzip){
-                    bs.addMiddleware( "*", gzipConnect, {
+                if( this.env.isProduction || this.env.isGZip){
+                    bs.addMiddleware( "*", gzipConnect( this.client.configFileData.paths.dest ), {
                         override: true
                     } );
                 }
@@ -304,4 +307,14 @@ export default class Package extends DataCollector{
             console.log( chalk.yellow('Nothing was deleted!!') );
         });
     }
+
+    deleteOldPublicFiles(){
+        const destPath = this.client.configFileData.paths.dest;
+        const emptyFunc = ()=>{};
+        rimraf( path.resolve(destPath, "css"), emptyFunc );
+        rimraf( path.resolve(destPath, "js"), emptyFunc );
+        rimraf( path.resolve(destPath, "images"), emptyFunc );
+        rimraf( path.resolve(destPath, "fonts"), emptyFunc );
+    }
+    
 }

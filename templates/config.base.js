@@ -91,7 +91,10 @@ module.exports = function( isProductionEnvironment, isHotModuleReloadEnabled ){
             /moment/,
             /scrollbars/,
             /react-color/,
-        ]
+        ],
+        eslintUsage:{
+            useEslintrc: false,
+        }
 
     };
 
