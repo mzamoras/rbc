@@ -229,4 +229,4 @@ But when you have run the **Main Script** at least once, you will be able to cal
 |rbc::recompileW| Same as rbc:compile but works in watch mode. |
 
 **Important**:
-Modifying this package and recompiling is **not recommended**, any change you made is in risk to be wiped as soon as you install new packages or update this one. **Use it carefully**
+Modifying this package once is installed as repository and recompiling is **not recommended**, any change you made is in risk to be **wiped out** as soon as you install new packages or update this one. **Use it carefully**

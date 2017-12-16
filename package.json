@@ -1,6 +1,6 @@
 {
   "name": "react-base-starter-project",
-  "version": "1.0.0",
+  "version": "0.0.1",
   "description": "Starts a React Base Project with all minimum requirements to start developing right away.",
   "main": "index.js",
   "scripts": {
@@ -20,6 +20,16 @@
   },
   "author": "MiKE Zamora <mzamoras@backlogics.com>",
   "license": "SEE LICENSE IN LICENSE",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/mzamoras/rbc.git"
+  },
+  "keywords": [
+    "starter",
+    "project",
+    "base",
+    "react"
+  ],
   "devDependencies": {},
   "dependencies": {
     "@storybook/react": "^3.2.12",
