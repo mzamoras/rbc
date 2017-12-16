@@ -19,7 +19,7 @@ cd Users\MyUser\MyFolder\MyProjectDir
 npm init -y
 
 #2. Add this package to dependencies
-yarn add https://github.com/mzamoras/rbc
+yarn add react-base-starter-project
 
 #3. Run the React Base Project
 npm run rbc::start
