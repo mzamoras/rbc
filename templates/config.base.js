@@ -36,8 +36,7 @@ module.exports = function( isProductionEnvironment, isHotModuleReloadEnabled ){
         src_css  : path.join( mainFolder, 'assets/css' ),
         src_less : path.join( mainFolder, 'assets/less' ),
         src_media: path.join( mainFolder, 'assets/media' ),
-        src_fonts: path.join( mainFolder, 'assets/fonts' ),
-
+        src_fonts: path.join( mainFolder, 'assets/fonts' )
     };
 
     config.base = {
@@ -99,6 +98,11 @@ module.exports = function( isProductionEnvironment, isHotModuleReloadEnabled ){
         }
 
     };
+
+    config.storyBook = {
+        path: path.join( mainFolder, 'storybook' ),
+        port: 9001
+    }
 
     return config;
 }

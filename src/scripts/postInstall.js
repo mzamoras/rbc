@@ -25,7 +25,7 @@ if( !!dataReader.json.client ){
         recompileW: `rimraf ./node_modules/${packName}/dist && babel --presets env --plugins transform-object-rest-spread -d ./node_modules/${packName}/dist/ ./node_modules/${packName}/src/ --copy-files -w`,
         start     : `node ./node_modules/${packName}/dist/start.js`,
         electron  : `node ./node_modules/${packName}/scripts/electron.js`,
-        storybook : `start-storybook -p 9001 -c ./resources/storybook`,
+        storybook : `node ./node_modules/${packName}/scripts/storybook.js`,
         karma     : `cross-env NODE_ENV=karma-test node ./node_modules/${packName}/dist/scripts/testConfig.js`,
         jest      : `cross-env NODE_ENV=jest-test node ./node_modules/${packName}/dist/scripts/testConfig.js`,
     };
