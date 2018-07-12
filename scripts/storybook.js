@@ -18,8 +18,14 @@
  * Copyright 2014-present. | All rights reserved.
  */
 
-const { exec }   = require('child_process');
+const { spawnSync }   = require('child_process');
 const config     = require('../../../rbc.config.js');
 const {path, port} = config().storyBook;
 
-exec(`node ./node_modules/@storybook/react/bin/index.js -p ${port} -c ${path}/storybook`);
+spawnSync("node",[
+    "./node_modules/@storybook/react/bin/index.js",
+    "-p",
+    port,
+    "-c",
+    path
+  ],{ maxBuffer: 1024 * 1024, stdio:'inherit' });

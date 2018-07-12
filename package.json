@@ -1,6 +1,6 @@
 {
   "name": "react-base-starter-project",
-  "version": "0.0.5",
+  "version": "0.0.6",
   "description": "Starts a React Base Project with all minimum requirements to start developing right away.",
   "main": "index.js",
   "scripts": {
