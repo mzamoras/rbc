@@ -37,6 +37,7 @@ if (!!dataReader.json.client) {
 
     dataReader.addClientScript(null, scripts);
     dataReader.saveClientPackageJson();
+    //dataReader.insertInClientPackageJsonKey(`rbc::eslintConfig",'extends',"./node_modules/${packName}/dist/config/eslint.conf.js`);
 } else {
     console.log('SCRIPT MEANT TO BE RUN BY CLIENT');
 }

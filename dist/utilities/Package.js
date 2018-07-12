@@ -14,6 +14,14 @@ var _fsExtra = require('fs-extra');
 
 var _fsExtra2 = _interopRequireDefault(_fsExtra);
 
+var _rimraf = require('rimraf');
+
+var _rimraf2 = _interopRequireDefault(_rimraf);
+
+var _glob = require('glob');
+
+var _glob2 = _interopRequireDefault(_glob);
+
 var _chalk = require('chalk');
 
 var _chalk2 = _interopRequireDefault(_chalk);
@@ -127,7 +135,7 @@ var Package = function (_DataCollector) {
 
             _inquirer2.default.prompt(observe).then(function (answers) {
                 var data = _fsExtra2.default.readFileSync(_this2.rbc.configTemplate, { encoding: "utf8" });
-                var clientConf = data.replace(/\%PROJECT_NAME\%/g, answers.projectName).replace(/\%LOCAL_ADDRESS\%/g, answers.projectAddress).replace(/\%PROXY_ADDRESS\%/g, answers.useProxy ? answers.proxyAddress : answers.projectAddress).replace(/\/\/USE_PROXY\/\//g, answers.useProxy ? "" : "//").replace(/false\,\/\/OPEN_CHROME\/\//g, answers.autoOpenChrome ? "true" : "false");
+                var clientConf = data.replace(/\%PROJECT_NAME\%/g, answers.projectName).replace(/\%LOCAL_ADDRESS\%/g, answers.projectAddress).replace(/\%PROXY_ADDRESS\%/g, answers.useProxy ? answers.proxyAddress : answers.projectAddress).replace(/\/\/USE_PROXY\/\//g, answers.useProxy ? "" : "//").replace(/false\,\/\/OPEN_CHROME\/\//g, answers.autoOpenChrome ? "true" : "false").replace(/true\,\/\/USE_STATIC\/\//g, answers.useProxy ? "false" : "true");
 
                 _fsExtra2.default.outputFileSync(_this2.client.configFilePath, clientConf);
             });
@@ -183,6 +191,9 @@ var Package = function (_DataCollector) {
 
             return new Promise(function (resolve, reject) {
 
+                //Delete old files
+                _this4.deleteOldPublicFiles();
+
                 var wpConf = _this4.wpConfig(_this4.env.isProduction, _this4.env.isHot, _this4.env.isGZip, _this4.env.doMinimize, _this4.client.configFileData);
                 var bsConf = _this4.bsConfig(_this4.env.isProduction, _this4.env.isHot, _this4.client.configFileData, _this4.env.isGZip, (0, _webpack2.default)(wpConf));
 
@@ -190,8 +201,8 @@ var Package = function (_DataCollector) {
 
                 browserSync.init(bsConf, function (err, bs) {
 
-                    if (_this4.env.isProduction || _this4.env.isGzip) {
-                        bs.addMiddleware("*", _connectGzipStatic2.default, {
+                    if (_this4.env.isProduction || _this4.env.isGZip) {
+                        bs.addMiddleware("*", (0, _connectGzipStatic2.default)(_this4.client.configFileData.paths.dest), {
                             override: true
                         });
                     }
@@ -245,6 +256,119 @@ var Package = function (_DataCollector) {
             }
 
             (0, _child_process.exec)("npm run rbc::electron");
+        }
+    }, {
+        key: 'runTest',
+        value: function runTest(comm) {
+            var watch = comm.indexOf("Watch") > -1;
+            var select = "";
+
+            if (comm.indexOf("Karma") > -1) {
+                select = watch ? "rbc::karmaWatch" : "rbc::karma";
+            } else if (comm.indexOf("Jest") > -1) {
+                select = watch ? "rbc::jestWatch" : "rbc::jest";
+            } else {
+                select = "rbc::storybook";
+            }
+
+            (0, _child_process.spawnSync)("npm", ['run', select], { stdio: 'inherit' });
+        }
+    }, {
+        key: 'runRecompile',
+        value: function runRecompile(comm) {
+            var watch = comm.indexOf("Watch") > -1;
+            (0, _child_process.spawnSync)("npm", ['run', watch ? "rbc::recompileW" : "rbc::recompile"], { stdio: 'inherit' });
+        }
+    }, {
+        key: 'runReset',
+        value: function runReset(comm) {
+            var _this6 = this;
+
+            var reader = new DataReader();
+            var reset = comm.indexOf("Delete") > -1;
+
+            if (reset) {
+                console.log(_chalk2.default.red.bold('\n -------------------------------------'));
+                console.log(_chalk2.default.red.bold(' I M P O R T A N T :'));
+                console.log(_chalk2.default.red.bold(' This could potentially lead to loss of'));
+                console.log(_chalk2.default.red.bold(' your important files. All Folders created '));
+                console.log(_chalk2.default.red.bold(' with this tool will be deleted. Be sure to'));
+                console.log(_chalk2.default.red.bold(' backup your important files first.'));
+                console.log(_chalk2.default.red.bold(' -------------------------------------\n'));
+            } else {
+                console.log(_chalk2.default.red.bold('\n -------------------------------------'));
+                console.log(_chalk2.default.red.bold(' I M P O R T A N T :'));
+                console.log(_chalk2.default.red.bold(' This will delete your configuration file'));
+                console.log(_chalk2.default.red.bold(' if you are unsure of this make a backup '));
+                console.log(_chalk2.default.red.bold(' of this file first.'));
+                console.log(_chalk2.default.red.bold(' -------------------------------------\n'));
+            }
+
+            var observe = _rxLiteAggregates2.default.Observable.create(function (obs) {
+                obs.onNext({
+                    type: 'confirm',
+                    name: 'config',
+                    message: _chalk2.default.red.bold(' Are you suer you want to delete your configuration file ( rbc.config.js ) ?'),
+                    when: !reset,
+                    default: false
+                });
+
+                obs.onNext({
+                    type: 'confirm',
+                    name: 'reset',
+                    message: _chalk2.default.red.bold(' Are you suer you want to delete your configurtion file and template files ?'),
+                    default: false,
+                    when: reset
+                });
+
+                obs.onCompleted();
+            });
+
+            _inquirer2.default.prompt(observe).then(function (answers) {
+                if (!!answers.reset) {
+
+                    var files = _glob2.default.sync("**/*.*", {
+                        cwd: _this6.rbc.templatesPath
+                    });
+
+                    files.push(_this6.client.configFilePath);
+
+                    files.forEach(function (f) {
+                        var fName = f.replace("structure/", _this6.client.configFileData.paths.src + "/");
+                        try {
+                            _fsExtra2.default.unlinkSync(fName);
+                            console.log(_chalk2.default.yellow('Deleted'), _chalk2.default.dim(fName));
+                        } catch (e) {}
+                    });
+
+                    (0, _rimraf2.default)(_path2.default.resolve(_this6.client.configFileData.paths.src, "react"), function () {});
+                    (0, _rimraf2.default)(_path2.default.resolve(_this6.client.configFileData.paths.src, "electron"), function () {});
+                    (0, _rimraf2.default)(_path2.default.resolve(_this6.client.configFileData.paths.src, "storybook"), function () {});
+                    (0, _rimraf2.default)(_path2.default.resolve(_this6.client.configFileData.paths.src, "public"), function () {});
+
+                    return;
+                }
+
+                if (!!answers.config) {
+                    try {
+                        _fsExtra2.default.unlinkSync(_this6.client.configFilePath);
+                        console.log(_chalk2.default.yellow('Deleted'), _chalk2.default.dim(_this6.client.configFilePath));
+                    } catch (e) {}
+                    return;
+                }
+
+                console.log(_chalk2.default.yellow('Nothing was deleted!!'));
+            });
+        }
+    }, {
+        key: 'deleteOldPublicFiles',
+        value: function deleteOldPublicFiles() {
+            var destPath = this.client.configFileData.paths.dest;
+            var emptyFunc = function emptyFunc() {};
+            (0, _rimraf2.default)(_path2.default.resolve(destPath, "css"), emptyFunc);
+            (0, _rimraf2.default)(_path2.default.resolve(destPath, "js"), emptyFunc);
+            (0, _rimraf2.default)(_path2.default.resolve(destPath, "images"), emptyFunc);
+            (0, _rimraf2.default)(_path2.default.resolve(destPath, "fonts"), emptyFunc);
         }
     }]);
 

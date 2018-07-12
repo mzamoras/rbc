@@ -9,7 +9,18 @@
  */
 
 import React from 'react';
-import withStyles from 'material-ui/styles/withStyles';
+import withStyles from '@material-ui/core/styles/withStyles';
+import loadable from 'react-loadable';
+import Button from '@material-ui/core/Button';
+
+const Loading = ()=>(
+    <div> * * L o a d i n g * * </div>
+);
+
+const LoadableComponentx = loadable({
+    loader: ()=> import('./LoadableComponent' /* webpackChunkName:"loadable" */),
+    loading: Loading
+});
 
 const cssStyles = theme =>{
     
@@ -55,26 +66,58 @@ const cssStyles = theme =>{
             color: currentStyle.fontColor,
             fontSize: 13,
             textAlign: 'center'
+        },
+
+        buttonContainer:{
+            textAlign: 'center',
+            "& button":{
+                display:"inline-block",
+                fontSize: 11
+            }
         }
     }
 };
 
-const WelcomeUnStyled = ( { classes, themeStyle, handleThemeChange } ) => (
-    <div className={classes.container}>
-        <div className={classes.title}>
-            React Base Project Starter Kit
-        </div>
-        <div className={classes.subTitle}>
-            Rendering App Component
-        </div>
-        <div className={classes.regularData}>
-            <strong>{process.env.SERVER_URL_FULL || 'no server was given'}</strong>
-        </div>
-        <div className={classes.themeChanger} onClick={ handleThemeChange }>
-            <i className='material-icons'>{ themeStyle === 'light' ? 'invert_colors' : 'invert_colors_off' }</i>
-        </div>
-        
-    </div>
-);
+class WelcomeUnStyled extends React.Component{
+    constructor( props ){
+        super( props );
+        this.state = {
+            loading: false
+        };
+        this.onLoadComponent = this.onLoadComponent.bind(this);
+    }
+
+    onLoadComponent(){
+        this.setState({ loading: true });
+    }
+
+    render(){
+        const { classes, themeStyle, handleThemeChange } = this.props;
+        return (
+            <div className={classes.container}>
+                <div className={classes.title}>
+                    React Base Project Starter Kit
+                </div>
+                <div className={classes.subTitle}>
+                    Rendering App Component
+                </div>
+                <div className={classes.regularData}>
+                    <strong>{process.env.SERVER_URL_FULL || 'no server was given'}</strong>
+                </div>
+                <div className={classes.themeChanger} onClick={ handleThemeChange }>
+                    <i className='material-icons'>{ themeStyle === 'light' ? 'invert_colors' : 'invert_colors_off' }</i>
+                </div>
+                
+                    <div className={classes.buttonContainer} >
+                        <Button variant="contained" size="small" disabled={this.state.loading} color="secondary" className={classes.button} onClick={this.onLoadComponent}>
+                            Load Component Asyncronous
+                        </Button>
+                    </div> 
+                
+                { this.state.loading && <LoadableComponentx/> }
+            </div>
+        );
+    }
+}
 
 export default withStyles(cssStyles)(WelcomeUnStyled);

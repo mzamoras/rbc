@@ -59,7 +59,7 @@ function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { de
             type: 'list',
             name: 'reqCommand',
             message: 'Which process would you like to run ?',
-            choices: ['Run Server', 'Run Electron App', 'Run Both', new _inquirer2.default.Separator(), 'ReConfigure', 'Delete Configuration and Start Over', new _inquirer2.default.Separator(), 'Compile RBC package | One time', 'Compile RBC package | Watch Mode', new _inquirer2.default.Separator()],
+            choices: ['Run Server', 'Run Electron App', 'Run Both', new _inquirer2.default.Separator(), 'Storybook', 'Test with Karma', 'Test with Karma | Watch Mode', 'Test with Jest', 'Test with Jest | Watch Mode', new _inquirer2.default.Separator(), 'ReConfigure', 'Delete Configuration and Start Over', new _inquirer2.default.Separator(), 'Compile RBC package | One time', 'Compile RBC package | Watch Mode', new _inquirer2.default.Separator()],
             default: 0
         }, {
             type: 'confirm',
@@ -146,6 +146,18 @@ function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { de
                 if (!useServer && runElectron) {
                     console.log(_chalk2.default.yellow("   Compiling ..."));
                 }
+            }
+
+            if (answers.reqCommand.indexOf("Test") > -1 || answers.reqCommand.indexOf("Storybook") > -1) {
+                _this.pack.runTest(answers.reqCommand);
+            }
+
+            if (answers.reqCommand.indexOf("Compile") > -1) {
+                _this.pack.runRecompile(answers.reqCommand);
+            }
+
+            if (answers.reqCommand.indexOf("Config") > -1) {
+                _this.pack.runReset(answers.reqCommand);
             }
         });
     },

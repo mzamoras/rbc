@@ -9,14 +9,12 @@
  */
 
 import expect from 'expect';
-import enzymify from 'expect-enzyme';
 import Enzyme, { mount, shallow , render } from 'enzyme';
 import Adapter from 'enzyme-adapter-react-16';
 import sinon from 'sinon';
 
 Enzyme.configure({ adapter: new Adapter() });
 
-expect.extend(enzymify());
 global.expect  = expect;
 global.mount   = mount;
 global.shallow = shallow;

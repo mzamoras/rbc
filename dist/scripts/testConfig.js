@@ -42,9 +42,11 @@ if (!!dataReader.config) {
     if (TEST === KARMA) {
         selectedTest = "rbc::karma";
         dataReader.addClientScript('karma', 'cross-env NODE_ENV=karma-test babel-node --presets env -- ' + nodeBin + 'karma start ' + pack + '/dist/config/karma.config.js');
+        dataReader.addClientScript('karmaWatch', 'cross-env NODE_ENV=karma-test babel-node --presets env -- ' + nodeBin + 'karma start ' + pack + '/dist/config/karma.config.js --watchAll');
     } else if (TEST === JEST) {
         selectedTest = "rbc::jest";
-        dataReader.addClientScript('jest', 'cross-env NODE_ENV=jest-test jest --config ' + testDir + ' || true');
+        dataReader.addClientScript('jest', 'jest --config ' + testDir + ' --no-cache');
+        dataReader.addClientScript('jestWatch', 'jest --config ' + testDir + ' --no-cache --watchAll');
     }
 
     dataReader.saveClientPackageJson();

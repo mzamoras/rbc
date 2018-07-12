@@ -28,6 +28,7 @@ exports.default = function () {
     var serverLocalURL = (0, _getURLData2.default)(custom.base.localURL);
     var serverLocalProxy = custom.base.proxyURL ? (0, _getURLData2.default)(custom.base.proxyURL) : null;
     var browseSyncVersion = _package2.default.dependencies['browser-sync'].replace("^", "");
+    var _useEslintrc = custom.wp.eslintUsage.useEslintrc;
 
     var config = {
 
@@ -56,10 +57,9 @@ exports.default = function () {
                 loader: 'eslint',
                 include: [custom.paths.src_js, custom.paths.src_react],
                 enforce: "pre",
-                options: {
-                    configFile: _path2.default.resolve(__dirname, "./eslint.conf.js"),
-                    useEslintrc: false
-                }
+                options: _extends({}, !_useEslintrc && { configFile: _path2.default.resolve(__dirname, "./eslint.conf.js") }, {
+                    useEslintrc: _useEslintrc
+                })
             },
 
             // B A B E L

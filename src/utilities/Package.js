@@ -14,7 +14,7 @@ import rimraf from 'rimraf';
 import glob from 'glob';
 import chalk from 'chalk';
 import inquirer from 'inquirer';
-import rx from 'rx-lite-aggregates'; 
+import {Observable} from "rxjs";
 import browserSyncServer from 'browser-sync';
 import webpack from 'webpack';
 import gzipConnect from 'connect-gzip-static';
@@ -34,30 +34,52 @@ export default class Package extends DataCollector{
     }
 
     setup(){
-        const observe = rx.Observable.create( function(obs) {
+        const observe = Observable.create( function(obs) {
             
-              obs.onNext({
+              obs.next({
                 type   : 'input',
                 name   : 'projectName',
                 message: ' Project Name ?',
                 default: "New Project"
               });
         
-              obs.onNext({
+              obs.next({
+                type   : 'confirm',
+                name   : 'isLocalhost',
+                message: ' Use localhost to serve the project ?',
+                default: true
+              });
+
+              obs.next({
+                type   : 'confirm',
+                name   : 'isHttps',
+                message: ' Use secure server to serve the project ( https:// ) ?',
+                default: false
+              });
+
+              obs.next({
                 type   : 'input',
-                name   : 'projectAddress',
-                message: ' Project local address and port ?',
-                default: "http://localhost:5001"
+                name   : 'localAddress',
+                message: ' Address or IP to serve the project ?',
+                default: "localhost",
+                when   : ( ({ isLocalhost }) => !isLocalhost )
+              });
+
+              obs.next({
+                type   : 'input',
+                name   : 'localPort',
+                message: ' Local Port?',
+                default: "5001"
               });
         
-              obs.onNext({
+              obs.next({
                 type   : 'confirm',
                 name   : 'useProxy',
                 message: ' Do you want to use a proxy ?',
                 default: false
               });
         
-              obs.onNext({
+              obs.next({
                 type   : 'input',
                 name   : 'proxyAddress',
                 message: ' Proxy address and port?',
@@ -65,22 +87,25 @@ export default class Package extends DataCollector{
                 when   : ( ({ useProxy }) => useProxy )
               });
         
-              obs.onNext({
+              obs.next({
                 type   : 'confirm',
                 name   : 'autoOpenChrome',
                 message: ' Auto open chrome when serving ?',
-                default: true
+                default: false
               });
         
-              obs.onCompleted();
+              obs.complete();
         });
 
         inquirer.prompt(observe).then( answers => {
-            const data       = fse.readFileSync(this.rbc.configTemplate,{ encoding:"utf8" });
-            const clientConf = data
+            const data           = fse.readFileSync(this.rbc.configTemplate,{ encoding:"utf8" });
+            const address        = answers.isLocalhost ? "localhost" : answers.localAddress;
+            const protocol       = answers.isHttps ? "https" : "http";
+            const projectAddress = `${protocol}://${address}:${answers.localPort}`;
+            const clientConf     = data
             .replace( /\%PROJECT_NAME\%/g, answers.projectName )
-            .replace( /\%LOCAL_ADDRESS\%/g, answers.projectAddress )
-            .replace( /\%PROXY_ADDRESS\%/g, answers.useProxy ? answers.proxyAddress : answers.projectAddress )
+            .replace( /\%LOCAL_ADDRESS\%/g, projectAddress )
+            .replace( /\%PROXY_ADDRESS\%/g, answers.useProxy ? answers.proxyAddress : projectAddress )
             .replace( /\/\/USE_PROXY\/\//g, answers.useProxy ? "" : "//" )
             .replace( /false\,\/\/OPEN_CHROME\/\//g, answers.autoOpenChrome ? "true" : "false" )
             .replace( /true\,\/\/USE_STATIC\/\//g, answers.useProxy ? "false" : "true" );
@@ -92,15 +117,15 @@ export default class Package extends DataCollector{
 
     copyTemplateFiles(){
 
-        const observe = rx.Observable.create( obs => {
-              obs.onNext({
+        const observe = Observable.create( obs => {
+              obs.next({
                 type   : 'confirm',
                 name   : 'copy',
                 message: ' Copy template files based on your ( rbc.config.js ) configuration file ?',
                 default: false
               });
 
-              obs.onNext({
+              obs.next({
                 type   : 'confirm',
                 name   : 'viewBlade',
                 message: ' Since your project has a proxy,\n Would you like to use php blade file for index template ( app.blade.php ) ? \nNote:( For Laravel Usage ) ?',
@@ -108,7 +133,7 @@ export default class Package extends DataCollector{
                 when   : answers => answers.copy && !!this.client.configFileData.base.proxyURL
               });
         
-              obs.onCompleted();
+              obs.complete();
         });
 
         inquirer.prompt(observe).then( answers => {
@@ -248,8 +273,8 @@ export default class Package extends DataCollector{
             console.log( chalk.red.bold(' -------------------------------------\n') );
         }
 
-        const observe = rx.Observable.create( obs => {
-            obs.onNext({
+        const observe = Observable.create( obs => {
+            obs.next({
                 type   : 'confirm',
                 name   : 'config',
                 message: chalk.red.bold(' Are you suer you want to delete your configuration file ( rbc.config.js ) ?'),
@@ -257,7 +282,7 @@ export default class Package extends DataCollector{
                 default: false,
             });
 
-            obs.onNext({
+            obs.next({
                 type   : 'confirm',
                 name   : 'reset',
                 message: chalk.red.bold(' Are you suer you want to delete your configurtion file and template files ?'),
@@ -265,7 +290,7 @@ export default class Package extends DataCollector{
                 when   : reset
             });
         
-            obs.onCompleted();
+            obs.complete();
         });
 
         inquirer.prompt(observe).then( answers => {

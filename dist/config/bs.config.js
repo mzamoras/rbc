@@ -14,10 +14,6 @@ var _extends = Object.assign || function (target) { for (var i = 1; i < argument
                                                                                                                                                                                                                                                                    * Copyright 2014-present. | All rights reserved.
                                                                                                                                                                                                                                                                    */
 
-/* export default function(){
-    console.log("BS CONFIG");
-} */
-
 exports.default = function (isProductionEnvironment, hot, custom, gziped, bundle) {
 
     var hasProxy = !!custom.base.proxyURL;

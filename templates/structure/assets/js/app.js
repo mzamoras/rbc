@@ -14,11 +14,6 @@ import {Provider} from 'react-redux';
 import {ConnectedRouter} from 'react-router-redux';
 import config, {getStoreHistory} from '../../react/store/config';
 
-// Plugin to handle tap on mobile devices, should only be inserted once,
-// so this is the place to do it.
-//import injectTapEventPlugin from 'react-tap-event-plugin';
-//injectTapEventPlugin();
-
 const mountPoint = document.getElementById( 'appRoot' );
 const reduxStore = config();
 const history    = getStoreHistory();

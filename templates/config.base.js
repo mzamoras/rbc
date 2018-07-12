@@ -80,7 +80,7 @@ module.exports = function( isProductionEnvironment, isHotModuleReloadEnabled ){
 
         output:{
             filename     : "js/[name].js",
-            chunkFilename: "js/zyx[chunkhash].js",
+            chunkFilename: "js/[name].js"
         },
 
         resolve:{
@@ -88,9 +88,11 @@ module.exports = function( isProductionEnvironment, isHotModuleReloadEnabled ){
         },
 
         vendorsInSameChunk: [
+            /*
             /moment/,
             /scrollbars/,
             /react-color/,
+            */
         ],
         eslintUsage:{
             useEslintrc: false,

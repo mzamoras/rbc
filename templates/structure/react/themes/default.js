@@ -8,7 +8,7 @@
  * Copyright 2014-present. | All rights reserved.
  */
 
-import createMuiTheme from 'material-ui/styles/createMuiTheme';
+import createMuiTheme from '@material-ui/core/styles/createMuiTheme';
 
 export default function( style = "light" ){
     const theme =  {

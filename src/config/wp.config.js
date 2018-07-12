@@ -38,6 +38,7 @@ export default function( isProductionEnvironment = false, hot = true, gziped = f
     const config = {
         
         devtool: isProductionEnvironment ? "source-map": "cheap-module-source-map",
+        mode   : isProductionEnvironment ? "production" : "development",
 
         // Taking from configuration files
         entry : custom.wp.entry,
@@ -55,7 +56,7 @@ export default function( isProductionEnvironment = false, hot = true, gziped = f
 
         module: {
 
-            loaders:[
+            rules:[
 
                 // E S L I N T
                 {
@@ -166,66 +167,53 @@ export default function( isProductionEnvironment = false, hot = true, gziped = f
 
         },
 
-        plugins: [
-
+        optimization: {
             /**
              * Avoid error when compiling
              */
-            new webpack.NoEmitOnErrorsPlugin(),
+            noEmitOnErrors: true,
+
+            /**
+             * Define environment
+             */
+            nodeEnv: isProductionEnvironment ? 'production' : 'development',
+            
+            /**
+             * Collects the bootstrap webpack files to the
+             * boot.js file
+             */
+            runtimeChunk: {
+                name: "boot"
+            },
+
+            splitChunks: {
+                cacheGroups: {
+                    ...( custom.wp.vendorsInSameChunk.length > 0 && {
+                        commons:{
+                            name: 'commons',
+                            chunks: 'all',
+                            test: chunk => {
+                                const targets = custom.wp.vendorsInSameChunk || [];
+                                return targets.find( t => t.test( chunk.context ) );
+                            }
+                        }
+                    } )
+                }
+            }
+        },
+
+        plugins: [
 
             /**
              * Add vars to the environment
              */
             new webpack.DefinePlugin( {
                 'process.env': {
-                    'NODE_ENV'   : JSON.stringify( !isProductionEnvironment ? 'development' : 'production' ),
-                    'SERVER_PORT': JSON.stringify( serverLocalURL.port ),
+                    'SERVER_PORT'    : JSON.stringify( serverLocalURL.port ),
                     'SERVER_URL_FULL': JSON.stringify( serverLocalURL.full ),
-                    'BS_VER'     : JSON.stringify( browseSyncVersion || false ),
-                    'IS_HOT'     : JSON.stringify( hot ),
+                    'BS_VER'         : JSON.stringify( browseSyncVersion || false ),
+                    'IS_HOT'         : JSON.stringify( hot ),
                 }
-            } ),
-
-            /**
-             * Optimizes and moves all common files up to their
-             * parents
-             */
-            new webpack.optimize.CommonsChunkPlugin( {
-                names   : Object.keys( custom.wp.entry ),
-                children: true,
-            } ),
-
-            /**
-             * Gathers all common elements and node module packages
-             * to the app file
-             */
-            new webpack.optimize.CommonsChunkPlugin( {
-                name    : Object.keys( custom.wp.entry )[ Object.keys( custom.wp.entry ).length - 1 ],
-                children: true,
-                minChunks( module, count ) {
-                    const context = module.context;
-                    return count >1 || context.indexOf( 'node_modules' ) > -1;
-                }
-            } ),
-
-            /**
-             * Collects the bootstrap webpack files to the
-             * boot.js file
-             */
-            new webpack.optimize.CommonsChunkPlugin( {
-                name     : 'boot',
-                minChunks: Infinity
-            } ),
-
-            /**
-             * Gathers all files needed once users are logged in
-             */
-            new webpack.optimize.CommonsChunkPlugin( {
-                async    : 'vendor-internals',
-                minChunks: ( { resource, context } ) => {
-                    const targets = custom.wp.vendorsInSameChunk || [];
-                    return targets.find( t => t.test( context ) )
-                },
             } ),
 
             /**
