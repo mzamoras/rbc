@@ -104,5 +104,11 @@ module.exports = function( isProductionEnvironment, isHotModuleReloadEnabled ){
         port: 9001
     }
 
+    config.tests = {
+        path: path.join( mainFolder, 'react/tests' ),
+        karmaIndex: path.join( mainFolder, 'react/tests/configuration/karma.index.js' ),
+        jestIndex: path.join( mainFolder, 'react/tests/configuration/jest.index.js' ),
+    }
+
     return config;
 }

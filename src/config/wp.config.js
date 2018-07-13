@@ -33,7 +33,8 @@ export default function( isProductionEnvironment = false, hot = true, gziped = f
     const serverLocalURL    = getURLData( custom.base.localURL );
     const serverLocalProxy  = custom.base.proxyURL ? getURLData( custom.base.proxyURL ) : null;
     const browseSyncVersion = pJson.dependencies['browser-sync'].replace( "^", "" );
-    const _useEslintrc       = custom.wp.eslintUsage.useEslintrc;
+    const _useEslintrc      = custom.wp.eslintUsage.useEslintrc;
+    const testStylesPath    = path.resolve(custom.paths.src,"/tests/utilities/");
 
     const config = {
         
@@ -81,7 +82,7 @@ export default function( isProductionEnvironment = false, hot = true, gziped = f
                 // C S S
                 {
                     test   : /\.css$/,
-                    include: [custom.paths.src_media, custom.paths.src_css],
+                    include: [custom.paths.src_media, custom.paths.src_css, testStylesPath],
                     loader : extractCSS.extract( {
 
                         fallback: [{
@@ -95,7 +96,7 @@ export default function( isProductionEnvironment = false, hot = true, gziped = f
                 // L E S S
                 {
                     test   : /\.less$/,
-                    include: [custom.paths.src_media, custom.paths.src_less],
+                    include: [custom.paths.src_media, custom.paths.src_less, testStylesPath],
                     loader : extractLESS.extract( {
                         fallback: [{
                             loader: 'style',

@@ -17,22 +17,27 @@ const dataReader = new DataReader();
 
 if( !!dataReader.json.client ){
 
-    const packName = dataReader.json.rbc.name;
+    const packName   = dataReader.json.rbc.name;
+    const nodeBin    = './node_modules/.bin/';
+    const pack       = `./node_modules/${packName}`;
 
     const scripts ={
         "// - - - React Base Project Starter Kit Scripts - - - //": "",
-        recompile : `rimraf ./node_modules/${packName}/dist && babel --presets env --plugins transform-object-rest-spread -d ./node_modules/${packName}/dist/ ./node_modules/${packName}/src/ --copy-files`,
-        recompileW: `rimraf ./node_modules/${packName}/dist && babel --presets env --plugins transform-object-rest-spread -d ./node_modules/${packName}/dist/ ./node_modules/${packName}/src/ --copy-files -w`,
-        start     : `node ./node_modules/${packName}/dist/start.js`,
-        electron  : `node ./node_modules/${packName}/scripts/electron.js`,
-        storybook : `node ./node_modules/${packName}/scripts/storybook.js`,
-        karma     : `cross-env NODE_ENV=karma-test node ./node_modules/${packName}/dist/scripts/testConfig.js`,
-        jest      : `cross-env NODE_ENV=jest-test node ./node_modules/${packName}/dist/scripts/testConfig.js`,
+        recompile : `rimraf ${pack}/dist && babel --presets env --plugins transform-object-rest-spread -d ${pack}/dist/ ${pack}/src/ --copy-files`,
+        recompileW: `rimraf ${pack}/dist && babel --presets env --plugins transform-object-rest-spread -d ${pack}/dist/ ${pack}/src/ --copy-files -w`,
+        start     : `node ${pack}/dist/start.js`,
+        electron  : `node ${pack}/scripts/electron.js`,
+        storybook : `node ${pack}/scripts/storybook.js`,
+        karma     : `node ${pack}/scripts/karma.js `,
+        karmaWatch: `node ${pack}/scripts/karma.js watch`,
+        jest     : `node ${pack}/scripts/jest.js `,
+        jestWatch: `node ${pack}/scripts/jest.js watch`,
     };
     
     dataReader.addClientScript( null, scripts );
+    dataReader.insertInClientPackageJsonKey(`rbc::eslintConfig",'extends',"./node_modules/${packName}/dist/config/eslint.conf.js`);
     dataReader.saveClientPackageJson();
-   //dataReader.insertInClientPackageJsonKey(`rbc::eslintConfig",'extends',"./node_modules/${packName}/dist/config/eslint.conf.js`);
+
 
 }
 else{
