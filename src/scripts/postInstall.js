@@ -35,7 +35,8 @@ if( !!dataReader.json.client ){
     };
     
     dataReader.addClientScript( null, scripts );
-    dataReader.insertInClientPackageJsonKey(`rbc::eslintConfig",'extends',"./node_modules/${packName}/dist/config/eslint.conf.js`);
+    dataReader.insertInClientPackageJsonKey(null,"rbc::eslintConfig",{ root: true, globals:{}, extends: `./node_modules/${packName}/dist/config/eslint.conf.js` });
+    //dataReader.insertInClientPackageJsonKey(`rbc::eslintConfig",'extends',"./node_modules/${packName}/dist/config/eslint.conf.js`);
     dataReader.saveClientPackageJson();
 
 

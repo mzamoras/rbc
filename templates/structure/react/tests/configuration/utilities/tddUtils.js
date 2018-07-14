@@ -8,10 +8,19 @@
  * Copyright 2014-present. | All rights reserved.
  */
 
+import React from 'react';
+
 let _mainNode  = null;
 let _nodes     = [];
 
 export class DomNodeManager{
+
+
+    set component( componentToTest ){
+        this.componentToTest = componentToTest;
+    }
+
+    componentToTest = null;
 
     get defaults(){
         return {
@@ -38,13 +47,18 @@ export class DomNodeManager{
         }
     }
 
-    makeNode( ){
+    makeNode( style = null ){
 
         const node = document.createElement( 'div' );
 
         const { child_id, child_class } = this.defaults;
         node.setAttribute("id", child_id.replace( "@@", _nodes.length + 1 ) );
         node.classList.add( child_class );
+        if( style ){
+            Object.keys( style ).forEach( key => {
+                node.style[key] = style[key];
+            } );
+        }
         _mainNode.appendChild(node);
         _nodes.push({node, id: child_id, destroy:( doDestroy = false )=>{
             if( !doDestroy ) return;
@@ -81,6 +95,29 @@ export class DomNodeManager{
         document.body.appendChild( title );
         title.classList.add( '__tddMainTitle__' );
         title.innerHTML = "React Base Project Starter Kit | TDD";
+    } 
+
+    createAutoDestroyer( nodeDestroyer, mounter ){
+        return (autoDestroy = true ) => {
+            if( autoDestroy ){
+                mounter.unmount();
+                nodeDestroyer( true );
+            }
+        }
+    }
+
+    createTestElements( props, nodeStyle ){
+        const Comp        = this.componentToTest;
+        const nodeData    = this.makeNode( nodeStyle );
+        const enzymeMount = mount(
+            <Comp {...props}/>, { attachTo: nodeData.node }
+        );
+       
+        return{
+            node   : nodeData.node,
+            mounter: enzymeMount,
+            destroy: this.createAutoDestroyer( nodeData.destroy, enzymeMount ),
+            spy    : sinon.spy(),
+        }
     }
 }
-

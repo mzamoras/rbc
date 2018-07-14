@@ -91,7 +91,7 @@ module.exports = function( config ){
         
                 webpackMiddleware: {
                     noInfo: true,
-                    logLevel: 'silent'
+                    logLevel: 'info'
                 },
         
         
