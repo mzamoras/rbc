@@ -1,0 +1,13 @@
+{
+    "defaultSeverity": "default",
+    "extends": [
+        "tslint:recommended","tslint-react"
+    ],
+    "jsRules": {},
+    "rules": {
+        "no-unused-variable": [true,{"ignore-pattern": "^_"}],
+        "no-trailing-whitespace": [true, "ignore-jsdoc"],
+        "member-access": [true, "no-public"]
+    },
+    "rulesDirectory": []
+}

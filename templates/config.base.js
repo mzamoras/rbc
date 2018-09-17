@@ -36,7 +36,11 @@ module.exports = function( isProductionEnvironment, isHotModuleReloadEnabled ){
         src_css  : path.join( mainFolder, 'assets/css' ),
         src_less : path.join( mainFolder, 'assets/less' ),
         src_media: path.join( mainFolder, 'assets/media' ),
-        src_fonts: path.join( mainFolder, 'assets/fonts' )
+        src_fonts: path.join( mainFolder, 'assets/fonts' ),
+
+        //The path where the tsconfig file should be placed
+        src_tsconfig: null,
+        src_tslint  : null
     };
 
     config.base = {
@@ -44,7 +48,7 @@ module.exports = function( isProductionEnvironment, isHotModuleReloadEnabled ){
         notificationsIcon: null,
         localURL         : "%LOCAL_ADDRESS%",
         //USE_PROXY//proxyURL        : "%PROXY_ADDRESS%",
-        allowCrossOrigin: isProductionEnvironment,
+        allowCrossOrigin: !isProductionEnvironment,
         useStaticHTML   : true,//USE_STATIC//,
         autoOpenChrome  : false,//OPEN_CHROME//,
 
@@ -83,7 +87,7 @@ module.exports = function( isProductionEnvironment, isHotModuleReloadEnabled ){
         },
 
         resolve:{
-            extensions: [ ".js", ".jsx", ".json" ]
+            extensions: [ ".js", ".jsx", ".json", ".ts", ".tsx" ]
         },
 
         vendorsInSameChunk: [

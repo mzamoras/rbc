@@ -12,6 +12,7 @@ import React from 'react';
 import withStyles from '@material-ui/core/styles/withStyles';
 import loadable from 'react-loadable';
 import Button from '@material-ui/core/Button';
+import TypeScriptComponent from './TypeScriptComponent';
 
 const Loading = ()=>(
     <div> * * L o a d i n g * * </div>
@@ -107,7 +108,7 @@ class WelcomeUnStyled extends React.Component{
                 <div className={classes.themeChanger} onClick={ handleThemeChange }>
                     <i className='material-icons'>{ themeStyle === 'light' ? 'invert_colors' : 'invert_colors_off' }</i>
                 </div>
-                
+                <TypeScriptComponent/>
                     <div className={classes.buttonContainer} >
                         <Button variant="contained" size="small" disabled={this.state.loading} color="secondary" className={classes.button} onClick={this.onLoadComponent}>
                             Load Component Asyncronous

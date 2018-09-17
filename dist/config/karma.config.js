@@ -10,17 +10,9 @@ var _extends = Object.assign || function (target) { for (var i = 1; i < argument
                                                                                                                                                                                                                                                                    * Copyright 2014-present. | All rights reserved.
                                                                                                                                                                                                                                                                    */
 
-var _fsExtra = require('fs-extra');
-
-var _fsExtra2 = _interopRequireDefault(_fsExtra);
-
 var _path = require('path');
 
 var _path2 = _interopRequireDefault(_path);
-
-var _webpack = require('webpack');
-
-var _webpack2 = _interopRequireDefault(_webpack);
 
 var _wp = require('./wp.config');
 
@@ -50,17 +42,22 @@ var watchMode = args.indexOf("--watchAll") > -1 ? "true" : false;
 
 var karmaWebpackConfig = {
         devtool: "eval",
+        mode: wpConfigSettings.mode,
         resolve: wpConfigSettings.resolve,
         resolveLoader: wpConfigSettings.resolveLoader,
         module: _extends({}, wpConfigSettings.module.noParse && { noParse: wpConfigSettings.module.noParse }, {
-                loaders: wpConfigSettings.module.loaders || []
+                rules: wpConfigSettings.module.rules || []
         }),
-        plugins: wpConfigSettings.plugins.slice(8, 10) //Adding CSS Extraction
+        optimization: {
+                noEmitOnErrors: wpConfigSettings.optimization.noEmitOnErrors,
+                nodeEnv: wpConfigSettings.optimization.nodeEnv
+        },
+        plugins: wpConfigSettings.plugins.slice(3, 4) //Adding CSS Extraction
 };
 
 var appPath = {
-        tests: _path2.default.resolve(configData.paths.src_react, "tests"),
-        testsFile: _path2.default.resolve(configData.paths.src_react, "tests/configuration/karma.index.js")
+        tests: _path2.default.resolve(configData.tests.path),
+        testsFile: _path2.default.resolve(configData.tests.karmaIndex)
 };
 
 module.exports = function (config) {
@@ -101,7 +98,8 @@ module.exports = function (config) {
                 webpack: karmaWebpackConfig,
 
                 webpackMiddleware: {
-                        noInfo: true
+                        noInfo: true,
+                        logLevel: 'info'
                 },
 
                 // web server port
@@ -112,7 +110,8 @@ module.exports = function (config) {
 
                 // level of logging
                 // possible values: config.LOG_DISABLE || config.LOG_ERROR || config.LOG_WARN || config.LOG_INFO || config.LOG_DEBUG
-                logLevel: config.LOG_INFO,
+                //logLevel: config.LOG_INFO,
+
 
                 // enable / disable watching file and executing tests whenever any file changes
                 autoWatch: true,

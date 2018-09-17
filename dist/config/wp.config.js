@@ -29,10 +29,13 @@ exports.default = function () {
     var serverLocalProxy = custom.base.proxyURL ? (0, _getURLData2.default)(custom.base.proxyURL) : null;
     var browseSyncVersion = _package2.default.dependencies['browser-sync'].replace("^", "");
     var _useEslintrc = custom.wp.eslintUsage.useEslintrc;
+    var testStylesPath = _path2.default.resolve(custom.paths.src, "/tests/utilities/");
+    var babelConfigData = (0, _babel2.default)(isProductionEnvironment, hot, false /* newHot */);
 
     var config = {
 
         devtool: isProductionEnvironment ? "source-map" : "cheap-module-source-map",
+        mode: isProductionEnvironment ? "production" : "development",
 
         // Taking from configuration files
         entry: custom.wp.entry,
@@ -49,7 +52,7 @@ exports.default = function () {
 
         module: {
 
-            loaders: [
+            rules: [
 
             // E S L I N T
             {
@@ -62,18 +65,51 @@ exports.default = function () {
                 })
             },
 
+            // T S L I N T
+            {
+                test: /\.tsx?$/,
+                enforce: "pre",
+                include: [custom.paths.src_js, custom.paths.src_react],
+                use: [{
+                    loader: 'tslint',
+                    options: {
+                        tsConfigFile: custom.paths.src_tsconfig || _path2.default.resolve(__dirname, "../../templates/tsconfig.json"),
+                        configFile: custom.paths.src_tslint || _path2.default.resolve(__dirname, "../../templates/tslint.json"),
+                        formattersDirectory: 'node_modules/custom-tslint-formatters/formatters',
+                        formatter: 'grouped'
+                    }
+                }]
+                //exclude: /(node_modules)/
+            },
+
             // B A B E L
             {
                 test: /\.jsx?$/,
                 include: [custom.paths.src_js, custom.paths.src_react],
                 loader: 'babel',
-                query: (0, _babel2.default)(isProductionEnvironment, hot, false /* newHot */)
+                query: babelConfigData
+            },
+
+            // T Y P E S C R I P T
+            {
+                test: /\.tsx?$/,
+                loader: 'awesome-typescript',
+                include: [custom.paths.src_js, custom.paths.src_react],
+                query: {
+                    useBabel: true,
+                    babelOptions: {
+                        babelrc: false,
+                        presets: babelConfigData.presets,
+                        plugins: babelConfigData.plugins
+                    },
+                    configFileName: custom.paths.src_tsconfig || _path2.default.resolve(__dirname, "../../templates/tsconfig.json")
+                }
             },
 
             // C S S
             {
                 test: /\.css$/,
-                include: [custom.paths.src_media, custom.paths.src_css],
+                include: [custom.paths.src_media, custom.paths.src_css, testStylesPath],
                 loader: extractCSS.extract({
 
                     fallback: [{
@@ -87,7 +123,7 @@ exports.default = function () {
             // L E S S
             {
                 test: /\.less$/,
-                include: [custom.paths.src_media, custom.paths.src_less],
+                include: [custom.paths.src_media, custom.paths.src_less, testStylesPath],
                 loader: extractLESS.extract({
                     fallback: [{
                         loader: 'style'
@@ -149,70 +185,52 @@ exports.default = function () {
 
         },
 
-        plugins: [
+        optimization: {
+            /**
+             * Avoid error when compiling
+             */
+            noEmitOnErrors: true,
 
-        /**
-         * Avoid error when compiling
-         */
-        new webpack.NoEmitOnErrorsPlugin(),
+            /**
+             * Define environment
+             */
+            nodeEnv: isProductionEnvironment ? 'production' : 'development',
+
+            /**
+             * Collects the bootstrap webpack files to the
+             * boot.js file
+             */
+            runtimeChunk: {
+                name: "boot"
+            },
+
+            splitChunks: {
+                cacheGroups: _extends({}, custom.wp.vendorsInSameChunk.length > 0 && {
+                    commons: {
+                        name: 'commons',
+                        chunks: 'all',
+                        test: function test(chunk) {
+                            var targets = custom.wp.vendorsInSameChunk || [];
+                            return targets.find(function (t) {
+                                return t.test(chunk.context);
+                            });
+                        }
+                    }
+                })
+            }
+        },
+
+        plugins: [
 
         /**
          * Add vars to the environment
          */
         new webpack.DefinePlugin({
             'process.env': {
-                'NODE_ENV': JSON.stringify(!isProductionEnvironment ? 'development' : 'production'),
                 'SERVER_PORT': JSON.stringify(serverLocalURL.port),
                 'SERVER_URL_FULL': JSON.stringify(serverLocalURL.full),
                 'BS_VER': JSON.stringify(browseSyncVersion || false),
                 'IS_HOT': JSON.stringify(hot)
-            }
-        }),
-
-        /**
-         * Optimizes and moves all common files up to their
-         * parents
-         */
-        new webpack.optimize.CommonsChunkPlugin({
-            names: Object.keys(custom.wp.entry),
-            children: true
-        }),
-
-        /**
-         * Gathers all common elements and node module packages
-         * to the app file
-         */
-        new webpack.optimize.CommonsChunkPlugin({
-            name: Object.keys(custom.wp.entry)[Object.keys(custom.wp.entry).length - 1],
-            children: true,
-            minChunks: function minChunks(module, count) {
-                var context = module.context;
-                return count > 1 || context.indexOf('node_modules') > -1;
-            }
-        }),
-
-        /**
-         * Collects the bootstrap webpack files to the
-         * boot.js file
-         */
-        new webpack.optimize.CommonsChunkPlugin({
-            name: 'boot',
-            minChunks: Infinity
-        }),
-
-        /**
-         * Gathers all files needed once users are logged in
-         */
-        new webpack.optimize.CommonsChunkPlugin({
-            async: 'vendor-internals',
-            minChunks: function minChunks(_ref) {
-                var resource = _ref.resource,
-                    context = _ref.context;
-
-                var targets = custom.wp.vendorsInSameChunk || [];
-                return targets.find(function (t) {
-                    return t.test(context);
-                });
             }
         }),
 
@@ -229,7 +247,7 @@ exports.default = function () {
         new _writeFileWebpackPlugin2.default({ test: /(js|css|media|fonts)\// }),
 
         // Extract for less and css
-        extractLESS, extractCSS]
+        extractLESS, extractCSS, new _awesomeTypescriptLoader.CheckerPlugin()]
 
     };
 
@@ -314,6 +332,8 @@ var _writeFileWebpackPlugin = require('write-file-webpack-plugin');
 
 var _writeFileWebpackPlugin2 = _interopRequireDefault(_writeFileWebpackPlugin);
 
+var _awesomeTypescriptLoader = require('awesome-typescript-loader');
+
 var _getURLData = require('../utilities/getURLData');
 
 var _getURLData2 = _interopRequireDefault(_getURLData);
@@ -335,7 +355,6 @@ function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { de
 var webpack = require('webpack');
 
 var MinifyPlugin = require("babel-minify-webpack-plugin");
-
 ;
 
 function cssModuleNaming(prod) {

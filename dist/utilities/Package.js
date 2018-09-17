@@ -30,9 +30,7 @@ var _inquirer = require('inquirer');
 
 var _inquirer2 = _interopRequireDefault(_inquirer);
 
-var _rxLiteAggregates = require('rx-lite-aggregates');
-
-var _rxLiteAggregates2 = _interopRequireDefault(_rxLiteAggregates);
+var _rxjs = require('rxjs');
 
 var _browserSync = require('browser-sync');
 
@@ -89,53 +87,81 @@ var Package = function (_DataCollector) {
         value: function setup() {
             var _this2 = this;
 
-            var observe = _rxLiteAggregates2.default.Observable.create(function (obs) {
+            var observe = _rxjs.Observable.create(function (obs) {
 
-                obs.onNext({
+                obs.next({
                     type: 'input',
                     name: 'projectName',
                     message: ' Project Name ?',
                     default: "New Project"
                 });
 
-                obs.onNext({
-                    type: 'input',
-                    name: 'projectAddress',
-                    message: ' Project local address and port ?',
-                    default: "http://localhost:5001"
+                obs.next({
+                    type: 'confirm',
+                    name: 'isLocalhost',
+                    message: ' Use localhost to serve the project ?',
+                    default: true
                 });
 
-                obs.onNext({
+                obs.next({
+                    type: 'confirm',
+                    name: 'isHttps',
+                    message: ' Use secure server to serve the project ( https:// ) ?',
+                    default: false
+                });
+
+                obs.next({
+                    type: 'input',
+                    name: 'localAddress',
+                    message: ' Address or IP to serve the project ?',
+                    default: "localhost",
+                    when: function when(_ref) {
+                        var isLocalhost = _ref.isLocalhost;
+                        return !isLocalhost;
+                    }
+                });
+
+                obs.next({
+                    type: 'input',
+                    name: 'localPort',
+                    message: ' Local Port?',
+                    default: "5001"
+                });
+
+                obs.next({
                     type: 'confirm',
                     name: 'useProxy',
                     message: ' Do you want to use a proxy ?',
                     default: false
                 });
 
-                obs.onNext({
+                obs.next({
                     type: 'input',
                     name: 'proxyAddress',
                     message: ' Proxy address and port?',
                     default: "http://example.com:80",
-                    when: function when(_ref) {
-                        var useProxy = _ref.useProxy;
+                    when: function when(_ref2) {
+                        var useProxy = _ref2.useProxy;
                         return useProxy;
                     }
                 });
 
-                obs.onNext({
+                obs.next({
                     type: 'confirm',
                     name: 'autoOpenChrome',
                     message: ' Auto open chrome when serving ?',
-                    default: true
+                    default: false
                 });
 
-                obs.onCompleted();
+                obs.complete();
             });
 
             _inquirer2.default.prompt(observe).then(function (answers) {
                 var data = _fsExtra2.default.readFileSync(_this2.rbc.configTemplate, { encoding: "utf8" });
-                var clientConf = data.replace(/\%PROJECT_NAME\%/g, answers.projectName).replace(/\%LOCAL_ADDRESS\%/g, answers.projectAddress).replace(/\%PROXY_ADDRESS\%/g, answers.useProxy ? answers.proxyAddress : answers.projectAddress).replace(/\/\/USE_PROXY\/\//g, answers.useProxy ? "" : "//").replace(/false\,\/\/OPEN_CHROME\/\//g, answers.autoOpenChrome ? "true" : "false").replace(/true\,\/\/USE_STATIC\/\//g, answers.useProxy ? "false" : "true");
+                var address = answers.isLocalhost ? "localhost" : answers.localAddress;
+                var protocol = answers.isHttps ? "https" : "http";
+                var projectAddress = protocol + '://' + address + ':' + answers.localPort;
+                var clientConf = data.replace(/\%PROJECT_NAME\%/g, answers.projectName).replace(/\%LOCAL_ADDRESS\%/g, projectAddress).replace(/\%PROXY_ADDRESS\%/g, answers.useProxy ? answers.proxyAddress : projectAddress).replace(/\/\/USE_PROXY\/\//g, answers.useProxy ? "" : "//").replace(/false\,\/\/OPEN_CHROME\/\//g, answers.autoOpenChrome ? "true" : "false").replace(/true\,\/\/USE_STATIC\/\//g, answers.useProxy ? "false" : "true");
 
                 _fsExtra2.default.outputFileSync(_this2.client.configFilePath, clientConf);
             });
@@ -145,15 +171,15 @@ var Package = function (_DataCollector) {
         value: function copyTemplateFiles() {
             var _this3 = this;
 
-            var observe = _rxLiteAggregates2.default.Observable.create(function (obs) {
-                obs.onNext({
+            var observe = _rxjs.Observable.create(function (obs) {
+                obs.next({
                     type: 'confirm',
                     name: 'copy',
                     message: ' Copy template files based on your ( rbc.config.js ) configuration file ?',
                     default: false
                 });
 
-                obs.onNext({
+                obs.next({
                     type: 'confirm',
                     name: 'viewBlade',
                     message: ' Since your project has a proxy,\n Would you like to use php blade file for index template ( app.blade.php ) ? \nNote:( For Laravel Usage ) ?',
@@ -163,7 +189,7 @@ var Package = function (_DataCollector) {
                     }
                 });
 
-                obs.onCompleted();
+                obs.complete();
             });
 
             _inquirer2.default.prompt(observe).then(function (answers) {
@@ -304,8 +330,8 @@ var Package = function (_DataCollector) {
                 console.log(_chalk2.default.red.bold(' -------------------------------------\n'));
             }
 
-            var observe = _rxLiteAggregates2.default.Observable.create(function (obs) {
-                obs.onNext({
+            var observe = _rxjs.Observable.create(function (obs) {
+                obs.next({
                     type: 'confirm',
                     name: 'config',
                     message: _chalk2.default.red.bold(' Are you suer you want to delete your configuration file ( rbc.config.js ) ?'),
@@ -313,7 +339,7 @@ var Package = function (_DataCollector) {
                     default: false
                 });
 
-                obs.onNext({
+                obs.next({
                     type: 'confirm',
                     name: 'reset',
                     message: _chalk2.default.red.bold(' Are you suer you want to delete your configurtion file and template files ?'),
@@ -321,7 +347,7 @@ var Package = function (_DataCollector) {
                     when: reset
                 });
 
-                obs.onCompleted();
+                obs.complete();
             });
 
             _inquirer2.default.prompt(observe).then(function (answers) {

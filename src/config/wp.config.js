@@ -18,6 +18,7 @@ import CompressionPlugin from 'compression-webpack-plugin';
 import ManifestPlugin from 'webpack-manifest-plugin';
 import WriteFilePlugin from 'write-file-webpack-plugin';
 const MinifyPlugin = require("babel-minify-webpack-plugin");
+import { CheckerPlugin } from 'awesome-typescript-loader';
 
 
 import getURLData from '../utilities/getURLData';
@@ -35,6 +36,7 @@ export default function( isProductionEnvironment = false, hot = true, gziped = f
     const browseSyncVersion = pJson.dependencies['browser-sync'].replace( "^", "" );
     const _useEslintrc      = custom.wp.eslintUsage.useEslintrc;
     const testStylesPath    = path.resolve(custom.paths.src,"/tests/utilities/");
+    const babelConfigData   =  babelConfig( isProductionEnvironment, hot, false/* newHot */ );
 
     const config = {
         
@@ -71,12 +73,45 @@ export default function( isProductionEnvironment = false, hot = true, gziped = f
                     }
                 }, 
 
+                // T S L I N T
+                {
+                    test: /\.tsx?$/,
+                    enforce: "pre",
+                    include: [custom.paths.src_js, custom.paths.src_react],
+                    use:[{
+                        loader : 'tslint',
+                        options: {
+                            tsConfigFile: custom.paths.src_tsconfig || path.resolve(__dirname,"../../templates/tsconfig.json"),
+                            configFile: custom.paths.src_tslint || path.resolve(__dirname,"../../templates/tslint.json"),
+                            formattersDirectory: 'node_modules/custom-tslint-formatters/formatters',
+                            formatter: 'grouped'
+                        },
+                    }],
+                    //exclude: /(node_modules)/
+                },
+
                 // B A B E L
                 {
                     test   : /\.jsx?$/,
                     include: [ custom.paths.src_js, custom.paths.src_react],
                     loader : 'babel',
-                    query  : babelConfig( isProductionEnvironment, hot, false/* newHot */ )
+                    query  : babelConfigData
+                },
+
+                // T Y P E S C R I P T
+                {
+                    test: /\.tsx?$/,
+                    loader: 'awesome-typescript',
+                    include: [ custom.paths.src_js, custom.paths.src_react],
+                    query:{ 
+                        useBabel: true, 
+                        babelOptions: {
+                            babelrc:false,
+                            presets: babelConfigData.presets,
+                            plugins: babelConfigData.plugins
+                        },
+                        configFileName: custom.paths.src_tsconfig || path.resolve(__dirname,"../../templates/tsconfig.json")
+                    }
                 },
 
                 // C S S
@@ -231,7 +266,8 @@ export default function( isProductionEnvironment = false, hot = true, gziped = f
 
             // Extract for less and css
             extractLESS,
-            extractCSS
+            extractCSS,
+            new CheckerPlugin()
 
         ]
 

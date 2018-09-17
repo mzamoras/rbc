@@ -1,0 +1,28 @@
+{
+    // W O R K I N G  V E R S I O N
+    // https://javascriptplayground.com/react-typescript/
+    
+    "compilerOptions": {
+        "module":"es6",
+        "target": "es6",
+        "baseUrl": "../../../",
+        "esModuleInterop": true,
+        "jsx": "react",
+        "typeRoots": [
+            "../node_modules/@types"
+         ],
+         "types": [
+             "node",
+             "react", "react-dom"
+        ],
+        "sourceMap": true,
+        "moduleResolution":"node",
+        "listEmittedFiles": false,
+        "allowSyntheticDefaultImports": true,
+        "strict": true
+        //"skipLibCheck": true
+    },
+    "exclude": [
+        "node_modules" // don't run on any code in the node_modules directory
+      ]
+}
