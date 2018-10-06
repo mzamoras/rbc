@@ -215,27 +215,29 @@ var Package = function (_DataCollector) {
         value: function startServer() {
             var _this4 = this;
 
-            return new Promise(function (resolve, reject) {
+            var runElectron = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : false;
 
-                //Delete old files
-                _this4.deleteOldPublicFiles();
 
-                var wpConf = _this4.wpConfig(_this4.env.isProduction, _this4.env.isHot, _this4.env.isGZip, _this4.env.doMinimize, _this4.client.configFileData);
-                var bsConf = _this4.bsConfig(_this4.env.isProduction, _this4.env.isHot, _this4.client.configFileData, _this4.env.isGZip, (0, _webpack2.default)(wpConf));
+            var electronCallBack = !runElectron ? null : function () {
+                _this4.runElectronApp();
+            };
 
-                var browserSync = _browserSync2.default.create('mainBrowserSyncServer');
+            //Delete old files
+            this.deleteOldPublicFiles();
 
-                browserSync.init(bsConf, function (err, bs) {
+            var wpConf = this.wpConfig(this.env.isProduction, this.env.isHot, this.env.isGZip, this.env.doMinimize, this.client.configFileData);
+            var bsConf = this.bsConfig(this.env.isProduction, this.env.isHot, this.client.configFileData, this.env.isGZip, (0, _webpack2.default)(wpConf), electronCallBack);
 
-                    if (_this4.env.isProduction || _this4.env.isGZip) {
-                        bs.addMiddleware("*", (0, _connectGzipStatic2.default)(_this4.client.configFileData.paths.dest), {
-                            override: true
-                        });
-                    }
+            var browserSync = _browserSync2.default.create('mainBrowserSyncServer');
 
-                    if (err) return console.log(err);
-                    resolve();
-                });
+            browserSync.init(bsConf, function (err, bs) {
+
+                if (_this4.env.isProduction || _this4.env.isGZip) {
+                    bs.addMiddleware("*", (0, _connectGzipStatic2.default)(_this4.client.configFileData.paths.dest), {
+                        override: true
+                    });
+                }
+                if (err) return console.log(err);
             });
         }
     }, {

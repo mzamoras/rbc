@@ -14,7 +14,7 @@ var _extends = Object.assign || function (target) { for (var i = 1; i < argument
                                                                                                                                                                                                                                                                    * Copyright 2014-present. | All rights reserved.
                                                                                                                                                                                                                                                                    */
 
-exports.default = function (isProductionEnvironment, hot, custom, gziped, bundle) {
+exports.default = function (isProductionEnvironment, hot, custom, gziped, bundle, electronCallBack) {
 
     var hasProxy = !!custom.base.proxyURL;
     var isStatic = custom.base.useStaticHTML || (hasProxy ? false : true);
@@ -30,6 +30,21 @@ exports.default = function (isProductionEnvironment, hot, custom, gziped, bundle
     var mainFolderName = _path2.default.basename(custom.paths.src);
     var destFolderName = _path2.default.basename(custom.paths.dest);
     var publicPathRelative = _path2.default.relative(process.cwd(), custom.paths.dest);
+
+    var bundeledWP = (0, _webpackDevMiddleware2.default)(bundle, {
+        publicPath: serverLocalURL.full + "/",
+        quiet: false,
+        noInfo: false,
+        stats: { colors: true, chunks: false, modules: false, children: false, hash: false }
+    });
+
+    bundeledWP.waitUntilValid(function () {
+        console.log('Package is in a valid state');
+        if (electronCallBack) {
+            console.log('Opening Electron');
+            electronCallBack();
+        }
+    });
 
     var config = _extends({
 
@@ -66,12 +81,7 @@ exports.default = function (isProductionEnvironment, hot, custom, gziped, bundle
             domain: serverLocalURL.simple + ':' + socketPort
         },
 
-        middleware: [(0, _webpackDevMiddleware2.default)(bundle, {
-            publicPath: serverLocalURL.full + "/",
-            quiet: false,
-            noInfo: false,
-            stats: { colors: true, chunks: false, modules: false, children: false, hash: false }
-        }), (0, _webpackHotMiddleware2.default)(bundle), function (req, res, next) {
+        middleware: [bundeledWP, (0, _webpackHotMiddleware2.default)(bundle), function (req, res, next) {
 
             if (custom.base.allowCrossOrigin) {
                 res.setHeader('Access-Control-Allow-Origin', '*');

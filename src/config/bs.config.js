@@ -13,7 +13,7 @@ import webpackDevMiddleware from 'webpack-dev-middleware';
 import webpackHotMiddleware from 'webpack-hot-middleware';
 import getURLData from '../utilities/getURLData.js';
 
-export default function( isProductionEnvironment, hot, custom, gziped, bundle ){
+export default function( isProductionEnvironment, hot, custom, gziped, bundle, electronCallBack ){
 
     const hasProxy         = !!custom.base.proxyURL;
     const isStatic         = custom.base.useStaticHTML || (hasProxy ? false :  true);
@@ -29,6 +29,22 @@ export default function( isProductionEnvironment, hot, custom, gziped, bundle ){
     const mainFolderName     = path.basename( custom.paths.src );
     const destFolderName     = path.basename( custom.paths.dest );
     const publicPathRelative = path.relative( process.cwd(), custom.paths.dest );
+
+    const bundeledWP = webpackDevMiddleware( bundle, {
+        publicPath: serverLocalURL.full + "/",
+        quiet     : false,
+        noInfo    : false,
+        stats     : {  colors: true, chunks: false, modules:false, children:false, hash:false }
+    } );
+
+    bundeledWP.waitUntilValid(() => {
+        console.log('Package is in a valid state');
+        if( electronCallBack ){
+            console.log('Opening Electron');
+            electronCallBack();
+        }
+       
+    });
 
     const config = {
 
@@ -86,12 +102,7 @@ export default function( isProductionEnvironment, hot, custom, gziped, bundle ){
         },
 
         middleware: [
-            webpackDevMiddleware( bundle, {
-                publicPath: serverLocalURL.full + "/",
-                quiet     : false,
-                noInfo    : false,
-                stats     : {  colors: true, chunks: false, modules:false, children:false, hash:false }
-            } ),
+            bundeledWP,
             webpackHotMiddleware( bundle ),
             function ( req, res, next ) {
 

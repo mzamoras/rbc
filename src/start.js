@@ -127,15 +127,9 @@ taketalk({
                 
     
                 if( useServer ){
-                    this.pack.startServer().then( ()=>{
-                        const to = setTimeout( ()=>{
-                            if(runElectron){
-                                this.pack.runElectronApp();
-                            }
-                            clearTimeout(to);
-                        }, 500 );
-                    } );
+                    this.pack.startServer( runElectron );
                 }
+                
                 else if( !useServer && runElectron){
                     this.pack.runElectronApp( false, answers.watch ); 
                     this.pack.env.doMinify = answers.productionServer;

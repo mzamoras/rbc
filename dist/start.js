@@ -116,14 +116,7 @@ function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { de
                 _this.pack.env.isDevelopment = !answers.productionServer;
 
                 if (useServer) {
-                    _this.pack.startServer().then(function () {
-                        var to = setTimeout(function () {
-                            if (runElectron) {
-                                _this.pack.runElectronApp();
-                            }
-                            clearTimeout(to);
-                        }, 500);
-                    });
+                    _this.pack.startServer(runElectron);
                 } else if (!useServer && runElectron) {
                     _this.pack.runElectronApp(false, answers.watch);
                     _this.pack.env.doMinify = answers.productionServer;

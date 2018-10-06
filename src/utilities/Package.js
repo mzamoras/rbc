@@ -156,29 +156,31 @@ export default class Package extends DataCollector{
         });
     }
 
-    startServer(){
-        return new Promise( (resolve, reject) =>{
-            
-            //Delete old files
-            this.deleteOldPublicFiles();
+    startServer( runElectron = false ){
 
-            const wpConf = this.wpConfig( this.env.isProduction, this.env.isHot, this.env.isGZip, this.env.doMinimize, this.client.configFileData );
-            const bsConf = this.bsConfig( this.env.isProduction, this.env.isHot, this.client.configFileData, this.env.isGZip, webpack( wpConf ) );
-    
-            const browserSync = browserSyncServer.create( 'mainBrowserSyncServer' );
             
-            browserSync.init( bsConf, ( err, bs ) =>{
-    
-                if( this.env.isProduction || this.env.isGZip){
-                    bs.addMiddleware( "*", gzipConnect( this.client.configFileData.paths.dest ), {
-                        override: true
-                    } );
-                }
-    
-                if ( err ) return console.log( err );
-                resolve();
-            });
-        } );
+        const electronCallBack = !runElectron ? null : ()=>{
+            this.runElectronApp();
+        } 
+
+        //Delete old files
+        this.deleteOldPublicFiles();
+
+        const wpConf = this.wpConfig( this.env.isProduction, this.env.isHot, this.env.isGZip, this.env.doMinimize, this.client.configFileData );
+        const bsConf = this.bsConfig( this.env.isProduction, this.env.isHot, this.client.configFileData, this.env.isGZip, webpack( wpConf ), electronCallBack );
+
+        const browserSync = browserSyncServer.create( 'mainBrowserSyncServer' );
+        
+        browserSync.init( bsConf, ( err, bs ) =>{
+
+            if( this.env.isProduction || this.env.isGZip){
+                bs.addMiddleware( "*", gzipConnect( this.client.configFileData.paths.dest ), {
+                    override: true
+                } );
+            }
+            if ( err ) return console.log( err );
+        });
+
     }
 
     runElectronApp( isUsingServer = true, watch = false ){
