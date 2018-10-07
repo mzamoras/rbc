@@ -57,6 +57,8 @@ export default function( isProductionEnvironment = false, hot = true, gziped = f
             moduleExtensions: ['-loader']
         },
 
+        ...( custom.wp.target && { target: custom.wp.target }),
+
         module: {
 
             rules:[

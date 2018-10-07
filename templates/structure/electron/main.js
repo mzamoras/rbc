@@ -8,10 +8,7 @@
  * Copyright 2014-present. | All rights reserved.
  */
 
-const {
-    app,
-    BrowserWindow
-} = require('electron')
+const { app, BrowserWindow} = require('electron')
 const path = require('path')
 const url  = require('url')
 
@@ -23,12 +20,13 @@ const public           = path.relative(__dirname, conf.paths.dest);
 // be closed automatically when the JavaScript object is garbage collected.
 let win
 
-
 function createWindow() {
     // Create the browser window.
     win = new BrowserWindow({
         width : 1150,
         height: 600,
+        preload: path.join(__dirname, 'preload.js'),
+        nodeIntegration: false,
         //transparent: true,
         //frame: true
     })
@@ -36,11 +34,13 @@ function createWindow() {
     global.publicPathRel = public;
 
     // and load the index.html of the app.
-    win.loadURL(url.format({
+   win.loadURL(url.format({
+        // pathname: path.join(__dirname, 'index.html'),
         pathname: path.join(__dirname, 'index.html'),
         protocol: 'file:',
         slashes : true
-    }))
+    }));
+    //win.loadFile(path.resolve(__dirname,"../public","index.html"));
 
     // Open the DevTools.
     win.webContents.openDevTools()

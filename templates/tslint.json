@@ -7,7 +7,9 @@
     "rules": {
         "no-unused-variable": [true,{"ignore-pattern": "^_"}],
         "no-trailing-whitespace": [true, "ignore-jsdoc"],
-        "member-access": [true, "no-public"]
+        "member-access": [true, "no-public"],
+        "jsx-no-multiline-js": false,
+        "interface-name" : [true, "never-prefix"]
     },
     "rulesDirectory": []
 }

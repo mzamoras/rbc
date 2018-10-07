@@ -99,7 +99,9 @@ module.exports = function( isProductionEnvironment, isHotModuleReloadEnabled ){
         ],
         eslintUsage:{
             useEslintrc: false,
-        }
+        },
+
+        target: 'electron-renderer'
 
     };
 
