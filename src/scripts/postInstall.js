@@ -8,21 +8,18 @@
  * Copyright 2014-present. | All rights reserved.
  */
 
-
-import { exec } from 'child_process';
 import DataReader from '../utilities/DataReader';
 
 const dataReader = new DataReader();
 
+if( !!DataReader.json.client ){
 
-if( !!dataReader.json.client ){
-
-    const packName   = dataReader.json.rbc.name;
-    const nodeBin    = './node_modules/.bin/';
+    const packName   = DataReader.json.rbc.name;
+    const nodeBin    = './node_modules/.bin/'; // eslint-disable-line
     const pack       = `./node_modules/${packName}`;
 
     const scripts ={
-        "// - - - React Base Project Starter Kit Scripts - - - //": "",
+        '// - - - React Base Project Starter Kit Scripts - - - //': '',
         recompile : `rimraf ${pack}/dist && babel --presets env --plugins transform-object-rest-spread -d ${pack}/dist/ ${pack}/src/ --copy-files`,
         recompileW: `rimraf ${pack}/dist && babel --presets env --plugins transform-object-rest-spread -d ${pack}/dist/ ${pack}/src/ --copy-files -w`,
         start     : `node ${pack}/dist/start.js`,
@@ -30,15 +27,13 @@ if( !!dataReader.json.client ){
         storybook : `node ${pack}/scripts/storybook.js`,
         karma     : `node ${pack}/scripts/karma.js `,
         karmaWatch: `node ${pack}/scripts/karma.js watch`,
-        jest     : `node ${pack}/scripts/jest.js `,
+        jest      : `node ${pack}/scripts/jest.js `,
         jestWatch: `node ${pack}/scripts/jest.js watch`,
     };
     
     dataReader.addClientScript( null, scripts );
-    dataReader.insertInClientPackageJsonKey(null,"rbc::eslintConfig",{ root: true, globals:{}, extends: `./node_modules/${packName}/dist/config/eslint.conf.js` });
-    //dataReader.insertInClientPackageJsonKey(`rbc::eslintConfig",'extends',"./node_modules/${packName}/dist/config/eslint.conf.js`);
+    dataReader.insertInClientPackageJsonKey(null,'rbc::eslintConfig',{ root: true, globals:{}, extends: `./node_modules/${packName}/dist/config/eslint.conf.js` });
     dataReader.saveClientPackageJson();
-
 
 }
 else{

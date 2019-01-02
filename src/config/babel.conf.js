@@ -8,33 +8,35 @@
  * Copyright 2014-present. | All rights reserved.
  */
 
-import path from 'path';
-
 export default function ( isProductionEnvironment = false, hot = true, newHot = false ) {
 
     const presets = [
-        [require.resolve( 'babel-preset-env' ), { modules: false }/* , { 'es2015': { modules: false } } */],
-        require.resolve( 'babel-preset-stage-2' ),
-        require.resolve( 'babel-preset-react' ),
+        [require.resolve( '@babel/preset-env' ), { modules: false }],
+        require.resolve( '@babel/preset-typescript' ),
+        require.resolve( '@babel/preset-react' ),
     ];
 
     const plugins = [
-        require.resolve( 'babel-plugin-transform-class-properties' ),
-        [require.resolve( 'babel-plugin-transform-object-rest-spread' ), { useBuiltIns: true }],
-        [require.resolve( 'babel-plugin-transform-runtime' ), {
+        require.resolve( '@babel/plugin-proposal-class-properties' ),
+        [require.resolve( '@babel/plugin-proposal-object-rest-spread' ), { useBuiltIns: true }],
+        [require.resolve( '@babel/plugin-transform-runtime' ), {
             helpers    : false,
-            polyfill   : false,
             regenerator: true,
-            moduleName : path.dirname( require.resolve( 'babel-runtime/package' ) )
         }],
-        [require.resolve( 'babel-plugin-import' ), [
-            { libraryName: "antd", style: true },
-            { libraryName: "material-ui", libraryDirectory: "components", camel2DashComponentName: false }]]
+        [require.resolve( '@babel/plugin-syntax-dynamic-import' )],
+        [require.resolve( 'babel-plugin-import' ), {
+                libraryName: 'antd', style: true
+            }, 'ant'
+        ],
+        [require.resolve( 'babel-plugin-import' ), {
+                libraryName: 'material-ui', libraryDirectory: 'components', camel2DashComponentName: false
+            }, 'material-ui'
+        ]
     ];
 
     if( hot || newHot ){
-        presets.push(
-            require.resolve( newHot ? 'react-hot-loader/babel'  : 'babel-preset-react-hmre' )
+        plugins.push(
+            require.resolve( 'react-hot-loader/babel' )
         );
     }
 
@@ -44,5 +46,4 @@ export default function ( isProductionEnvironment = false, hot = true, newHot = 
         presets       : presets,
         plugins       : plugins
     }
-
 }

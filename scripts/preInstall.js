@@ -12,9 +12,9 @@
  const fse    = require('fs-extra');
  const {exec} = require('child_process');
 
- const rbcPath        = path.resolve( __dirname, "../" );
- const clientPath     = path.resolve( rbcPath, "../../" );
- const rbcJSON        = path.resolve( rbcPath, "package.json" );
+ const rbcPath        = path.resolve( __dirname, '../' );
+ const clientPath     = path.resolve( rbcPath, '../../' );
+ const rbcJSON        = path.resolve( rbcPath, 'package.json' );
  const clientJSON     = path.resolve( clientPath, 'package.json' );
  const rbcJSONData    = fse.readJsonSync( rbcJSON, { throws: false } );
  const clientJSONData = fse.readJsonSync( clientJSON, { throws: false } ) || null;

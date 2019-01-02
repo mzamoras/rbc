@@ -10,11 +10,11 @@
 
 (function browserSyncLoader( win, doc ) {
     
-    console.log( "[Browsersync] checking for script existence..." );
+    console.log( '[Browsersync] checking for script existence...' );
 
     if(!!doc.getElementById( '__electron__' )){
-        doc.write(`<script async id="__bs_script__" src="${process.env.SERVER_URL_FULL}/browser-sync/browser-sync-client.js?v=${process.env.BS_VER}"></script>`)
-        console.log( "[Browsersync] Electron Script inserted successfully!!!" );
+        doc.write(`<script async id='__bs_script__' src="${process.env.SERVER_URL_FULL}/browser-sync/browser-sync-client.js?v=${process.env.BS_VER}"></script>`);
+        console.log( '[Browsersync] Electron Script inserted successfully!!!' );
         return;
     }
 
@@ -22,9 +22,9 @@
     const currentScript = doc.getElementById( '__bs_script__' );
 
     if ( !currentScript && process.env.BS_VER && process.env.SERVER_PORT ) {
-        doc.write( "<script async src='" + `//localhost:${process.env.SERVER_PORT}/browser-sync/browser-sync-client.js?v=${process.env.BS_VER}` + "'><\/script>" );
-        console.log( "[Browsersync] Script inserted successfully! [ browser-sync-client." + process.env.BS_VER + " ]" );
+        doc.write( `<script async src="//localhost:${process.env.SERVER_PORT}/browser-sync/browser-sync-client.js?v=${process.env.BS_VER}"></script>`);
+        console.log( '[Browsersync] Script inserted successfully! [ browser-sync-client.' + process.env.BS_VER + ' ]' );
         return;
     }
-    console.log( "[Browsersync]", currentScript ? " Script is already inserted!" : " There was an error inserting the script!" );
+    console.log( '[Browsersync]', currentScript ? ' Script is already inserted!' : ' There was an error inserting the script!' );
 })( window, document );

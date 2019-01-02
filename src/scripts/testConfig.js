@@ -33,26 +33,26 @@
     const testDir    = path.resolve( configData.paths.src_react, 'tests/configuration/jest.index.js' );
 
     if( TEST === KARMA ){
-        selectedTest = "rbc::karma";
+        selectedTest = 'rbc::karma';
         dataReader.addClientScript( 'karma', `cross-env NODE_ENV=karma-test babel-node --presets env -- ${nodeBin}karma start ${pack}/dist/config/karma.config.js` );
         dataReader.addClientScript( 'karmaWatch', `cross-env NODE_ENV=karma-test babel-node --presets env -- ${nodeBin}karma start ${pack}/dist/config/karma.config.js --watchAll` );
     }
     else if( TEST === JEST ){
-        selectedTest = "rbc::jest";
+        selectedTest = 'rbc::jest';
         dataReader.addClientScript( 'jest', `jest --config ${testDir} --no-cache` );
         dataReader.addClientScript( 'jestWatch', `jest --config ${testDir} --no-cache --watchAll` );
     }
 
     dataReader.saveClientPackageJson();
 
-    spawnSync("npm",[
+    spawnSync('npm',[
         'run',
         selectedTest
     ], { stdio:'inherit' });
 
  }
  else{
-    console.log("Run the main script first, to make your configurations");
+    console.log('Run the main script first, to make your configurations');
  }
 
 

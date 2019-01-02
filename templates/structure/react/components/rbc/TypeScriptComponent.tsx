@@ -8,13 +8,17 @@
  * Copyright 2014-present. | All rights reserved.
  */
 
-import React from "react";
+import React from 'react';
 
-export default class TypeScriptComponent extends React.Component {
+interface Props {
+    title?: string;
+}
+
+export default class TypeScriptComponent extends React.Component <Props, {}> {
 
     render() {
         return(
-            <div style={{ textAlign: "center", fontSize: 13 }}>==Typescript Component==</div>
+            <div style={{ textAlign: 'center', fontSize: 13 }}>=={this.props.title}==</div>
         );
     }
 }

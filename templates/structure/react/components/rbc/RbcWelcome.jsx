@@ -10,17 +10,15 @@
 
 import React from 'react';
 import withStyles from '@material-ui/core/styles/withStyles';
-import loadable from 'react-loadable';
+import { asyncComponent } from 'react-async-component'
 import Button from '@material-ui/core/Button';
 import TypeScriptComponent from './TypeScriptComponent';
 
-const Loading = ()=>(
-    <div> * * L o a d i n g * * </div>
-);
-
-const LoadableComponentx = loadable({
-    loader: ()=> import('./LoadableComponent' /* webpackChunkName:"loadable" */),
-    loading: Loading
+const LoadableComponent = asyncComponent({
+    resolve: ()=> import('./LoadableComponent'),
+    LoadingComponent: ()=> <div>Loading ...</div>,
+    name: 'loadableComponent',
+    ErrorComponent: ()=> <div>There was an error loading this component.</div>,
 });
 
 const cssStyles = theme =>{
@@ -71,8 +69,8 @@ const cssStyles = theme =>{
 
         buttonContainer:{
             textAlign: 'center',
-            "& button":{
-                display:"inline-block",
+            '& button':{
+                display:'inline-block',
                 fontSize: 11
             }
         }
@@ -108,14 +106,14 @@ class WelcomeUnStyled extends React.Component{
                 <div className={classes.themeChanger} onClick={ handleThemeChange }>
                     <i className='material-icons'>{ themeStyle === 'light' ? 'invert_colors' : 'invert_colors_off' }</i>
                 </div>
-                <TypeScriptComponent/>
+                <TypeScriptComponent title='TypeScript Component'/>
                     <div className={classes.buttonContainer} >
                         <Button variant="contained" size="small" disabled={this.state.loading} color="secondary" className={classes.button} onClick={this.onLoadComponent}>
-                            Load Component Asyncronous
+                            Load Component Asynchronous
                         </Button>
                     </div> 
                 
-                { this.state.loading && <LoadableComponentx/> }
+                { this.state.loading && <LoadableComponent/> }
             </div>
         );
     }
