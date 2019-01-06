@@ -14,9 +14,9 @@ import update from 'immutability-helper';
 const UPDATE_THEME_STYLE = 'UPDATE_THEME_STYLE';
 
 const initialState = {
-    theme     : "default",
-    themeStyle: "light"
-}
+    theme     : 'default',
+    themeStyle: 'light'
+};
 
 export default function reducer( state = initialState, action = {} ) {
 
@@ -38,4 +38,4 @@ demoStore_actions.changeThemeStyle = function( type = UPDATE_THEME_STYLE, style 
     return { type, data: {
         newStyle: style
     } };
-}
+};

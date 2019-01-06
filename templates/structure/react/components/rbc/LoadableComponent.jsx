@@ -20,12 +20,12 @@ const localStyles = theme =>{
             color    : currentStyle.secondaryColor,
             fontSize : 14,
             textAlign: 'center',
-            fontWeight: "bold"
+            fontWeight: 'bold'
         }
     }
-}
+};
 
-class UnstyledLoadableComponent extends React.Component{
+class UnStyledLoadableComponent extends React.Component{
     render(){
         return(
            <div className={this.props.classes.base}>
@@ -35,5 +35,5 @@ class UnstyledLoadableComponent extends React.Component{
     }
 }
 
-export default withStyles( localStyles )( UnstyledLoadableComponent );
+export default withStyles( localStyles )( UnStyledLoadableComponent );
 

@@ -47,21 +47,21 @@ taketalk({
                 name   : 'reqCommand',
                 message: 'Which process would you like to run ?',
                 choices: [ 
-                    `Run Server`,
-                    `Run Electron App`,
-                    `Run Both`,
+                    'Run Server',
+                    'Run Electron App',
+                    'Run Both',
                     new inquirer.Separator(),
-                    `Storybook`,
-                    `Test with Karma`,
-                    `Test with Karma | Watch Mode`,
-                    `Test with Jest`,
-                    `Test with Jest | Watch Mode`,
+                    'Storybook',
+                    'Test with Karma',
+                    'Test with Karma | Watch Mode',
+                    'Test with Jest',
+                    'Test with Jest | Watch Mode',
                     new inquirer.Separator(),
-                    `ReConfigure` ,
-                    `Delete Configuration and Start Over` ,
+                    'ReConfigure' ,
+                    'Delete Configuration and Start Over' ,
                     new inquirer.Separator(),
-                    `Compile RBC package | One time`,
-                    `Compile RBC package | Watch Mode`,
+                    'Compile RBC package | One time',
+                    'Compile RBC package | Watch Mode',
                     new inquirer.Separator(),
                 ],
                 default: 0
@@ -72,7 +72,7 @@ taketalk({
                 message: 'Do you want to run in PRODUCTION environment ?',
                 default: false,
                 when   : answers => {
-                    return answers.reqCommand.indexOf("Run") > -1
+                    return answers['reqCommand'].indexOf('Run') > -1
                 }
             },
             {
@@ -81,7 +81,7 @@ taketalk({
                 message: 'Run Hot Replacement ?',
                 default: true,
                 when   : answers => {
-                    return answers.reqCommand.indexOf("Run Server") > -1 || answers.reqCommand === "Run Both"
+                    return answers['reqCommand'].indexOf('Run Server') > -1 || answers['reqCommand'] === 'Run Both'
                 }
             },
             {
@@ -90,7 +90,7 @@ taketalk({
                 message: 'GZip compiled files ?',
                 default: true,
                 when   : answers => {
-                    return answers.reqCommand.indexOf("Run Server") > -1 || answers.reqCommand === "Run Both"
+                    return answers['reqCommand'].indexOf('Run Server') > -1 || answers['reqCommand'] === 'Run Both'
                 }
             },
             {
@@ -99,7 +99,7 @@ taketalk({
                 message: 'Minify compiled files ( compiling may be slower )?',
                 default: false,
                 when   : answers => {
-                    return answers.reqCommand.indexOf("Run Server") > -1 || answers.reqCommand === "Run Both"
+                    return answers['reqCommand'].indexOf('Run Server') > -1 || answers['reqCommand'] === 'Run Both'
                 }
             },
             {
@@ -108,22 +108,22 @@ taketalk({
                 message: 'Watch Mode: Watch for changes ( This is not HotModuleReload )?',
                 default: true,
                 when   : answers => {
-                    return answers.reqCommand.indexOf("Electron") > -1
+                    return answers['reqCommand'].indexOf('Electron') > -1
                 }
             }
         ]).then( answers => {
 
-            if( answers.reqCommand.indexOf("Run") > -1){
-                let   message   = "Nothing Running";
-                const srv       = answers.productionServer ? "PRODUCTION" : "Development";
-                const useServer = answers.reqCommand.indexOf( "App" ) < 0 
-                const runElectron = answers.reqCommand.indexOf( "App" ) > -1 || answers.reqCommand.indexOf( "Both" ) > -1
+            if( answers['reqCommand'].indexOf('Run') > -1){
+                let   message   = 'Nothing Running'; //eslint-disable-line
+                const srv       = answers['productionServer'] ? 'PRODUCTION' : 'Development';
+                const useServer = answers['reqCommand'].indexOf( 'App' ) < 0;
+                const runElectron = answers['reqCommand'].indexOf( 'App' ) > -1 || answers['reqCommand'].indexOf( 'Both' ) > -1;
                 
                 this.pack.env.isHot         = answers.isHot;
                 this.pack.env.isGZip        = answers.isGZip;
                 this.pack.env.doMinify      = answers.doMinify;
-                this.pack.env.isProduction  = answers.productionServer;
-                this.pack.env.isDevelopment = !answers.productionServer;
+                this.pack.env.isProduction  = answers['productionServer'];
+                this.pack.env.isDevelopment = !answers['productionServer'];
                 
     
                 if( useServer ){
@@ -132,38 +132,38 @@ taketalk({
                 
                 else if( !useServer && runElectron){
                     this.pack.runElectronApp( false, answers.watch ); 
-                    this.pack.env.doMinify = answers.productionServer;
+                    this.pack.env.doMinify = answers['productionServer'];
                 }
 
-                this.pack.welcome();
-                console.log ( "   ===================================" );
-                console.log ( chalk.cyan.bold("          Selected Configuration    ") );
-                console.log ( "   ===================================" );
-                console.log ( "       Running Server:", useServer ? chalk.green.bold("YES") : chalk.red.bold("NO") );
-                console.log ( "     Running Electron:", runElectron ? chalk.green.bold("YES") : chalk.red.bold("NO") );
-                console.log ( "           Hot Reload:", answers.isHot ? chalk.green.bold("YES") : chalk.red.bold("NO") );
-                console.log ( "           GZip Files:", answers.isGZip ? chalk.green.bold("YES") : chalk.red.bold("NO") );
-                console.log ( "       Minified Files:", answers.doMinify ? chalk.green.bold("YES") : chalk.red.bold("NO") );
-                console.log ( "          Environment:", srv );
+                Package.welcome();
+                console.log ( '   ===================================' );
+                console.log ( chalk.cyan.bold('          Selected Configuration    ') );
+                console.log ( '   ===================================' );
+                console.log ( '       Running Server:', useServer ? chalk.green.bold('YES') : chalk.red.bold('NO') );
+                console.log ( '     Running Electron:', runElectron ? chalk.green.bold('YES') : chalk.red.bold('NO') );
+                console.log ( '           Hot Reload:', answers.isHot ? chalk.green.bold('YES') : chalk.red.bold('NO') );
+                console.log ( '           GZip Files:', answers.isGZip ? chalk.green.bold('YES') : chalk.red.bold('NO') );
+                console.log ( '       Minified Files:', answers.doMinify ? chalk.green.bold('YES') : chalk.red.bold('NO') );
+                console.log ( '          Environment:', srv );
                 if( !useServer && runElectron ){
-                    console.log ( "     Watching Changes:", answers.watch ? chalk.green.bold("YES") : chalk.red.bold("NO") );
+                    console.log ( '     Watching Changes:', answers.watch ? chalk.green.bold('YES') : chalk.red.bold('NO') );
                 }
-                console.log ( "   ===================================\n" );
+                console.log ( '   ===================================\n' );
                 if( !useServer && runElectron ){
-                    console.log ( chalk.yellow("   Compiling ...") );
+                    console.log ( chalk.yellow('   Compiling ...') );
                 }
             }
 
-            if( answers.reqCommand.indexOf("Test") > -1 || answers.reqCommand.indexOf("Storybook") > -1){
-                this.pack.runTest(answers.reqCommand);
+            if( answers['reqCommand'].indexOf('Test') > -1 || answers['reqCommand'].indexOf('Storybook') > -1){
+                Package.runTest(answers['reqCommand']);
             }
 
-            if( answers.reqCommand.indexOf("Compile") > -1){
-                this.pack.runRecompile( answers.reqCommand );
+            if( answers['reqCommand'].indexOf('Compile') > -1){
+                Package.runRecompile( answers['reqCommand'] );
             }
 
-            if( answers.reqCommand.indexOf("Config") > -1){
-                this.pack.runReset( answers.reqCommand );
+            if( answers['reqCommand'].indexOf('Config') > -1){
+                this.pack.runReset( answers['reqCommand'] );
             }
 
         });

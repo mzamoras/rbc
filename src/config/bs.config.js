@@ -9,35 +9,36 @@
  */
 
 import path from 'path';
+import fs from 'fs-extra';
 import webpackDevMiddleware from 'webpack-dev-middleware';
 import webpackHotMiddleware from 'webpack-hot-middleware';
 import getURLData from '../utilities/getURLData.js';
 
-export default function( isProductionEnvironment, hot, custom, gziped, bundle, electronCallBack ){
+export default function( isProductionEnvironment, hot, custom, gzipped, bundle, electronCallBack ){
 
-    const hasProxy         = !!custom.base.proxyURL;
-    const isStatic         = custom.base.useStaticHTML || (hasProxy ? false :  true);
+    const hasProxy         = !!custom.base['proxyURL'];
+    const isStatic         = custom.base.useStaticHTML || (!hasProxy);
     const allowCrossOrigin = custom.base.allowCrossOrigin;
 
     const serverLocalURL = getURLData( custom.base.localURL );
-    const serverProxyURL = hasProxy ? getURLData( custom.base.proxyURL ) : null;
+    const serverProxyURL = hasProxy ? getURLData( custom.base['proxyURL'] ) : null;
 
     const mainPort   = parseInt( serverLocalURL.port, 10 );
     const uiPort     = mainPort -1;
-    const socketPort = !!custom.base.proxyURL ? mainPort -2 : mainPort;
+    const socketPort = !!custom.base['proxyURL'] ? mainPort -2 : mainPort;
 
-    const mainFolderName     = path.basename( custom.paths.src );
-    const destFolderName     = path.basename( custom.paths.dest );
+    //const mainFolderName     = path.basename( custom.paths.src );
+    //const destFolderName     = path.basename( custom.paths.dest );
     const publicPathRelative = path.relative( process.cwd(), custom.paths.dest );
 
-    const bundeledWP = webpackDevMiddleware( bundle, {
-        publicPath: serverLocalURL.full + "/",
+    const bundleWP = webpackDevMiddleware( bundle, {
+        publicPath: serverLocalURL.full + '/',
         quiet     : false,
         noInfo    : false,
         stats     : {  colors: true, chunks: false, modules:false, children:false, hash:false }
     } );
 
-    bundeledWP.waitUntilValid(() => {
+    bundleWP.waitUntilValid(() => {
         console.log('Package is in a valid state');
         if( electronCallBack ){
             console.log('Opening Electron');
@@ -46,11 +47,11 @@ export default function( isProductionEnvironment, hot, custom, gziped, bundle, e
        
     });
 
-    const config = {
+    return {
 
         port           : mainPort,
         ui             : { port: uiPort},
-        browser        : "google chrome",
+        browser        : 'google chrome',
         reloadOnRestart: true,
         injectChanges  : true,
         open           : custom.base.autoOpenChrome,
@@ -62,7 +63,7 @@ export default function( isProductionEnvironment, hot, custom, gziped, bundle, e
         /**
          * Space to Add SSL Certificates ( self signed are most common )
          */
-        ... ( custom.base.sslCert && {
+        ...( (custom.base.sslCert && fs.pathExistsSync(custom.base.sslCert)) && {
             https: custom.base.sslCert
         } ),
 
@@ -74,7 +75,7 @@ export default function( isProductionEnvironment, hot, custom, gziped, bundle, e
             {
                 server: {
                     baseDir: `${publicPathRelative}`,
-                    index  : "index.html"
+                    index  : 'index.html'
                 }
             } 
         ),
@@ -102,7 +103,7 @@ export default function( isProductionEnvironment, hot, custom, gziped, bundle, e
         },
 
         middleware: [
-            bundeledWP,
+            bundleWP,
             webpackHotMiddleware( bundle ),
             function ( req, res, next ) {
 
@@ -127,8 +128,5 @@ export default function( isProductionEnvironment, hot, custom, gziped, bundle, e
             `${publicPathRelative}/vendor/**/*.css`,
         ]
 
-    }
-
-    return config;
-
+    };
 }

@@ -8,20 +8,22 @@
  * Copyright 2014-present. | All rights reserved.
  */
 
-import {routerReducer} from 'react-router-redux';
+import {connectRouter} from 'connected-react-router';
 import {combineReducers} from 'redux';
 import demoStore from './demoStore';
 
 
-const appReducer = combineReducers( { router: routerReducer, demoStore }  );
+const appReducer = history => combineReducers( { router: connectRouter(history), demoStore }  );
 
-const root = ( state, action ) => {
+const root = history =>{
+    return ( state, action ) => {
 
-    if ( action.type === 'RESET' ) {
-        console.log( "\u2757\uFE0F\u2757\uFE0F RESETTING STORE" );
-        state = { router: state.router }
+        if ( action.type === 'RESET' ) {
+            console.log( '\u2757\uFE0F\u2757\uFE0F RESETTING STORE' );
+            state = { router: state.router }
+        }
+        return appReducer(history)( state, action )
     }
-    return appReducer( state, action )
 };
 
 export default root;

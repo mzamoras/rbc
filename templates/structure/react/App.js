@@ -21,8 +21,8 @@ class App extends React.Component{
     constructor( props ){
         super( props );
         this.state = {
-            themeStyle: "light"
-        }
+            themeStyle: 'light'
+        };
         this.handleThemeChange = this.handleThemeChange.bind(this);
     }
 

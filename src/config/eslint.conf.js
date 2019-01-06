@@ -43,6 +43,9 @@ module.exports = {
             node: {
                 extensions: ['.js', '.json']
             }
+        },
+        'react':{
+            version: 'latest'
         }
     },
 
@@ -121,7 +124,12 @@ module.exports = {
         'no-unreachable': 'warn',
         'no-unused-expressions': 'warn',
         'no-unused-labels': 'warn',
-        'no-unused-vars': ['warn', { vars: 'local', args: 'none' }],
+        'no-unused-vars': ['warn', {
+            vars: 'all',
+            args: 'none',
+            argsIgnorePattern: '^_',
+            ignoreRestSiblings: true
+        }],
         'no-use-before-define': ['warn', 'nofunc'],
         'no-useless-computed-key': 'warn',
         'no-useless-concat': 'warn',
@@ -168,6 +176,9 @@ module.exports = {
         // https://github.com/gajus/eslint-plugin-flowtype
         'flowtype/define-flow-type': 'warn',
         'flowtype/require-valid-file-annotation': 'warn',
-        'flowtype/use-flow-type': 'warn'
+        'flowtype/use-flow-type': 'warn',
+
+        //Other
+        'quotes':[1, 'single']
     }
 };

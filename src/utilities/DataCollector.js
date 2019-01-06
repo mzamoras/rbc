@@ -24,9 +24,9 @@ export default class DataCollector{
         this.messages = {};
 
         this.fileNames = {
-            configFile    : "rbc.config.js",
-            configTemplate: "config.base.js"
-        }
+            configFile    : 'rbc.config.js',
+            configTemplate: 'config.base.js'
+        };
 
         this.env = {
             isHot        : false,
@@ -34,7 +34,8 @@ export default class DataCollector{
             isDevelopment: true,
             needsConfig  : true,
             isClient     : false,
-        }
+            doMinimize   : false
+        };
 
         this.client = {
             path           : null,
@@ -42,7 +43,7 @@ export default class DataCollector{
             packageJsonPath: null,
             configFileData : null,
             configFilePath : null
-        }
+        };
 
         this.rbc = {
             path           : null,
@@ -51,9 +52,9 @@ export default class DataCollector{
             templatesPath  : null,
             defaultConfigWP: null,
             defaultConfigBS: null
-        }
+        };
         
-        this.welcome();
+        DataCollector.welcome();
         this.boot();
     }
 
@@ -62,38 +63,40 @@ export default class DataCollector{
         
 
         //Environment
-        this.env.isProduction  = optKeys.includes("production") || optKeys.includes("production-hot");
-        this.env.isHot         = optKeys.includes("hot") || optKeys.includes("production-hot");
+        this.env.isProduction  = optKeys.includes('production') || optKeys.includes('production-hot');
+        this.env.isHot         = optKeys.includes('hot') || optKeys.includes('production-hot');
         this.env.isDevelopment = !this.env.isProduction;
         this.env.isGZip        = true;
         
         //Client
         this.client.path            = path.resolve( process.cwd() );
-        this.client.packageJsonPath = path.resolve( this.client.path, "package.json" );
+        this.client.packageJsonPath = path.resolve( this.client.path, 'package.json' );
         this.client.packageJsonData = fse.readJSONSync( this.client.packageJsonPath, { throws: false } );
         this.client.configFilePath  = path.resolve( this.client.path, this.fileNames.configFile );
         this.client.configFileData  = fse.pathExistsSync( this.client.configFilePath )
                                         ? require( this.client.configFilePath )(this.env.isProduction, this.env.isHot) 
-                                                                                                                                                            :             null ;
+                                        : null ;
         this.client.srcExist = this.client.configFileData ? fse.pathExistsSync( this.client.configFileData.paths.src )      : false;
         this.client.srcExist = this.client.configFileData ? fse.pathExistsSync( this.client.configFileData.paths.src_react ): false;
 
         //Rbc
-        this.rbc.path                = path.resolve( __dirname, "../../" );
-        this.rbc.templatesPath       = path.resolve( this.rbc.path, "templates" );
-        this.rbc.templates_structure = path.resolve( this.rbc.templatesPath, "structure" );
-        this.rbc.templates_assets    = path.resolve( this.rbc.templates_structure, "assets" );
-        this.rbc.templates_views     = path.resolve( this.rbc.templates_structure, "views" );
-        this.rbc.templates_electron  = path.resolve( this.rbc.templates_structure, "electron" );
-        this.rbc.templates_storybook = path.resolve( this.rbc.templates_structure, "storybook" );
-        this.rbc.templates_react     = path.resolve( this.rbc.templates_structure, "react" );
-        this.rbc.templates_public    = path.resolve( this.rbc.templates_structure, "public" );
+        this.rbc.path                = path.resolve( __dirname, '../../' );
+        this.rbc.templatesPath       = path.resolve( this.rbc.path, 'templates' );
+        this.rbc.templates_structure = path.resolve( this.rbc.templatesPath, 'structure' );
+        this.rbc.templates_assets    = path.resolve( this.rbc.templates_structure, 'assets' );
+        this.rbc.templates_views     = path.resolve( this.rbc.templates_structure, 'views' );
+        this.rbc.templates_electron  = path.resolve( this.rbc.templates_structure, 'electron' );
+        this.rbc.templates_storybook = path.resolve( this.rbc.templates_structure, 'storybook' );
+        this.rbc.templates_react     = path.resolve( this.rbc.templates_structure, 'react' );
+        this.rbc.templates_public    = path.resolve( this.rbc.templates_structure, 'public' );
         this.rbc.configTemplate      = path.resolve( this.rbc.templatesPath, this.fileNames.configTemplate );
-        this.rbc.packageJsonPath     = path.resolve( this.rbc.path, "package.json" );
+        this.rbc.packageJsonPath     = path.resolve( this.rbc.path, 'package.json' );
         this.rbc.packageJsonData     = fse.readJSONSync( this.rbc.packageJsonPath, { throws: false } );
 
         this.defaultConfigWP     = path.resolve( this.rbc.path , 'dist/config/wp.config.js' );
         this.defaultConfigBS     = path.resolve( this.rbc.path , 'dist/config/bs.config.js' );
+
+
         this.defaultConfigBabel  = path.resolve( this.rbc.path , 'dist/config/babel.config.js' );
         this.defaultConfigEslint = path.resolve( this.rbc.path , 'dist/config/eslint.config.js' );
 
@@ -112,34 +115,33 @@ export default class DataCollector{
     //
 
 
-    setMessages(){
+    static setMessages(){
 
         const nr   = chalk.cyan;
         const nrb  = nr.bold;
-        const prod = chalk.red.bold;
-        const dev  = chalk.magenta.bold;
+        const prod = chalk.red.bold; // eslint-disable-line no-unused-vars
+        const dev  = chalk.magenta.bold; // eslint-disable-line no-unused-vars
 
         return{
-            title: nrb("REACT BASE COMPONENTS")
-        }
+            title: nrb('REACT BASE COMPONENTS')
+        };
     }
 
     
-    welcome(){
-        this.clearConsole();
-        const spacing = "                ";
+    static welcome(){
+        DataCollector.clearConsole();
+        const spacing = '                ';
         console.log(
-            "+-------------------------------------------------------+\n" +
-            chalk.dim("|",spacing) + chalk.cyan.bold("REACT BASE COMPONENTS") + chalk.dim(spacing,"|") + "\n" +
-            "+-------------------------------------------------------+"
+            '+-------------------------------------------------------+\n' +
+            chalk.dim('|',spacing) + chalk.cyan.bold('REACT BASE COMPONENTS') + chalk.dim(spacing,'|') + '\n' +
+            '+-------------------------------------------------------+'
         );
     }
 
 
-    clearConsole(){
+    static clearConsole(){
         process.stdout.write(
             process.platform === 'win32' ? '\x1Bc': '\x1B[2J\x1B[3J\x1B[H'
         );
     }
-
 }

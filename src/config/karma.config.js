@@ -18,13 +18,13 @@ const dataReader = new DataReader();
 
 const configData   = dataReader.config;
 const localURLData = getURLData(configData.base.localURL);
-const localPort    = parseInt(localURLData.port) - 3;
+const localPort    = parseInt(localURLData.port, 10) - 3;
 
 const wpConfigSettings   = wpConfig( false, false, false, false, configData );
-const watchMode = args.indexOf("--watchAll") > -1 ? "true" : false;
+const watchMode = args.indexOf('--watchAll') > -1 ? 'true' : false;
 
 const karmaWebpackConfig = {
-    devtool      : "eval",
+    devtool      : 'eval',
     mode         : wpConfigSettings.mode,
     resolve      : wpConfigSettings.resolve,
     resolveLoader: wpConfigSettings.resolveLoader,
@@ -37,7 +37,7 @@ const karmaWebpackConfig = {
         nodeEnv: wpConfigSettings.optimization.nodeEnv
     },
     plugins: wpConfigSettings.plugins.slice(3,4) //Adding CSS Extraction
-}
+};
 
 const appPath = {
     tests    : path.resolve( configData.tests.path),
@@ -125,4 +125,4 @@ module.exports = function( config ){
                 // how many browser should be started simultaneous
                 concurrency: Infinity
             } )
-}
+};

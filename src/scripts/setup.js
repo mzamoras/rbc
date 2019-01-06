@@ -23,15 +23,15 @@ import messages from '../utilities/messages';
 
 const createQuestion = [
     {
-        type   : "confirm",
-        name   : "setup",
-        message: "Do you want to create it ? ( ./rbc.config.js ) ",
+        type   : 'confirm',
+        name   : 'setup',
+        message: 'Do you want to create it ? ( ./rbc.config.js ) ',
         default: false
     },
     {
-        type   : "confirm",
-        name   : "setupFiles",
-        message: "Do you want to create the folder structure ? ",
+        type   : 'confirm',
+        name   : 'setupFiles',
+        message: 'Do you want to create the folder structure ? ',
         default: false,
         when   : answers => !!answers.setup
     },
@@ -40,8 +40,8 @@ const createQuestion = [
 export default function(){
 
     const appDirectory   = fs.realpathSync(process.cwd());
-    const configFileName = "rbc.config.js";
-    const templateFile   = path.join(__dirname,"../../templates/config.base.js");
+    const configFileName = 'rbc.config.js';
+    const templateFile   = path.join(__dirname, '../../templates/config.base.js');
     const configFile     = path.resolve(appDirectory,configFileName);
     
     return new Promise( function( resolve, reject ){
@@ -62,7 +62,7 @@ export default function(){
 
                     const customConf = require( '../../templates/config.base' );
                     const mainBaseName = path.basename( customConf(false,false).paths.src );
-                    const templateStructure = path.join(__dirname,"../../templates/structure");
+                    const templateStructure = path.join(__dirname, '../../templates/structure');
                     
                     fse.copy( templateStructure, path.join( appDirectory, mainBaseName ) )
                     .then( ()=>console.log( 'ok') )

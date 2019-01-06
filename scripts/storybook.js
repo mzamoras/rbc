@@ -22,10 +22,10 @@ const { spawnSync }   = require('child_process');
 const config     = require('../../../rbc.config.js');
 const {path, port} = config().storyBook;
 
-spawnSync("node",[
-    "./node_modules/@storybook/react/bin/index.js",
-    "-p",
+spawnSync('node',[
+    './node_modules/@storybook/react/bin/index.js',
+    '-p',
     port,
-    "-c",
+    '-c',
     path
   ],{ maxBuffer: 1024 * 1024, stdio:'inherit' });

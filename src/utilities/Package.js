@@ -14,7 +14,7 @@ import rimraf from 'rimraf';
 import glob from 'glob';
 import chalk from 'chalk';
 import inquirer from 'inquirer';
-import {Observable} from "rxjs";
+import {Observable} from 'rxjs';
 import browserSyncServer from 'browser-sync';
 import webpack from 'webpack';
 import gzipConnect from 'connect-gzip-static';
@@ -22,10 +22,6 @@ import DataCollector from './DataCollector';
 import { exec, spawnSync } from 'child_process';
 
 export default class Package extends DataCollector{
-
-    constructor(input, options){
-        super(input, options)
-    }
 
     init(){
         if( this.env.isClient && this.env.needsConfig ){
@@ -40,7 +36,7 @@ export default class Package extends DataCollector{
                 type   : 'input',
                 name   : 'projectName',
                 message: ' Project Name ?',
-                default: "New Project"
+                default: 'New Project'
               });
         
               obs.next({
@@ -61,7 +57,7 @@ export default class Package extends DataCollector{
                 type   : 'input',
                 name   : 'localAddress',
                 message: ' Address or IP to serve the project ?',
-                default: "localhost",
+                default: 'localhost',
                 when   : ( ({ isLocalhost }) => !isLocalhost )
               });
 
@@ -69,7 +65,7 @@ export default class Package extends DataCollector{
                 type   : 'input',
                 name   : 'localPort',
                 message: ' Local Port?',
-                default: "5001"
+                default: '5001'
               });
         
               obs.next({
@@ -83,7 +79,7 @@ export default class Package extends DataCollector{
                 type   : 'input',
                 name   : 'proxyAddress',
                 message: ' Proxy address and port?',
-                default: "http://example.com:80",
+                default: 'http://example.com:80',
                 when   : ( ({ useProxy }) => useProxy )
               });
         
@@ -98,20 +94,19 @@ export default class Package extends DataCollector{
         });
 
         inquirer.prompt(observe).then( answers => {
-            const data           = fse.readFileSync(this.rbc.configTemplate,{ encoding:"utf8" });
-            const address        = answers.isLocalhost ? "localhost" : answers.localAddress;
-            const protocol       = answers.isHttps ? "https" : "http";
+            const data           = fse.readFileSync(this.rbc.configTemplate,{ encoding:'utf8' });
+            const address        = answers['isLocalhost'] ? 'localhost' : answers['localAddress'];
+            const protocol       = answers['isHttps'] ? 'https' : 'http';
             const projectAddress = `${protocol}://${address}:${answers.localPort}`;
             const clientConf     = data
-            .replace( /\%PROJECT_NAME\%/g, answers.projectName )
-            .replace( /\%LOCAL_ADDRESS\%/g, projectAddress )
-            .replace( /\%PROXY_ADDRESS\%/g, answers.useProxy ? answers.proxyAddress : projectAddress )
-            .replace( /\/\/USE_PROXY\/\//g, answers.useProxy ? "" : "//" )
-            .replace( /false\,\/\/OPEN_CHROME\/\//g, answers.autoOpenChrome ? "true" : "false" )
-            .replace( /true\,\/\/USE_STATIC\/\//g, answers.useProxy ? "false" : "true" );
+            .replace( /%PROJECT_NAME%/g, answers.projectName )
+            .replace( /%LOCAL_ADDRESS%/g, projectAddress )
+            .replace( /%PROXY_ADDRESS%/g, answers.useProxy ? answers['proxyAddress'] : projectAddress )
+            .replace( /\/\/USE_PROXY\/\//g, answers.useProxy ? '' : '//' )
+            .replace( /false,\/\/OPEN_CHROME\/\//g, answers.autoOpenChrome ? 'true' : 'false' )
+            .replace( /true,\/\/USE_STATIC\/\//g, answers.useProxy ? 'false' : 'true' );
 
-            fse.outputFileSync(this.client.configFilePath, clientConf); 
-            
+            fse.outputFileSync(this.client.configFilePath, clientConf);
         });
     }
 
@@ -130,7 +125,7 @@ export default class Package extends DataCollector{
                 name   : 'viewBlade',
                 message: ' Since your project has a proxy,\n Would you like to use php blade file for index template ( app.blade.php ) ? \nNote:( For Laravel Usage ) ?',
                 default: false,
-                when   : answers => answers.copy && !!this.client.configFileData.base.proxyURL
+                when   : answers => answers.copy && !!this.client.configFileData.base['proxyURL']
               });
         
               obs.complete();
@@ -138,14 +133,14 @@ export default class Package extends DataCollector{
 
         inquirer.prompt(observe).then( answers => {
             if(answers.copy){
-                fse.copySync(this.rbc.templates_assets, path.resolve(this.client.configFileData.paths.src, "assets"));
-                fse.copySync(this.rbc.templates_react, path.resolve(this.client.configFileData.paths.src, "react"));
-                fse.copySync(this.rbc.templates_electron, path.resolve(this.client.configFileData.paths.src, "electron"));
-                fse.copySync(this.rbc.templates_storybook, path.resolve(this.client.configFileData.paths.src, "storybook"));
+                fse.copySync(this.rbc.templates_assets, path.resolve(this.client.configFileData.paths.src, 'assets'));
+                fse.copySync(this.rbc.templates_react, path.resolve(this.client.configFileData.paths.src, 'react'));
+                fse.copySync(this.rbc.templates_electron, path.resolve(this.client.configFileData.paths.src, 'electron'));
+                fse.copySync(this.rbc.templates_storybook, path.resolve(this.client.configFileData.paths.src, 'storybook'));
                 fse.copySync(this.rbc.templates_public, this.client.configFileData.paths.dest);
 
-                if( answers.viewBlade){
-                    fse.copySync(this.rbc.templates_views, path.resolve(this.client.configFileData.paths.src, "views"));
+                if( answers['viewBlade']){
+                    fse.copySync(this.rbc.templates_views, path.resolve(this.client.configFileData.paths.src, 'views'));
                 }
                 
                 console.log( 'Templates Copied');
@@ -161,7 +156,7 @@ export default class Package extends DataCollector{
             
         const electronCallBack = !runElectron ? null : ()=>{
             this.runElectronApp();
-        } 
+        };
 
         //Delete old files
         this.deleteOldPublicFiles();
@@ -174,7 +169,7 @@ export default class Package extends DataCollector{
         browserSync.init( bsConf, ( err, bs ) =>{
 
             if( this.env.isProduction || this.env.isGZip){
-                bs.addMiddleware( "*", gzipConnect( this.client.configFileData.paths.dest ), {
+                bs.addMiddleware( '*', gzipConnect( this.client.configFileData.paths.dest ), {
                     override: true
                 } );
             }
@@ -196,19 +191,19 @@ export default class Package extends DataCollector{
             const printStats  = stats => console.log( stats.toString(statsConf) );
             const compileFunc = (err, stats) => {
                 if (errorManager(err)) { return; }
-                this.welcome();
-                console.log("\n");
+                Package.welcome();
+                console.log('\n');
                 printStats( stats );
                 if(!initialized){
-                    console.log(chalk.yellow("\nOpening App ..."));
-                    exec("npm run rbc::electron");
+                    console.log(chalk.yellow('\nOpening App ...'));
+                    exec('npm run rbc::electron');
                     initialized = true;
                 }
                 if ( watch ){
-                    console.log(chalk.yellow("\nWaiting for changes ... "));
+                    console.log(chalk.yellow('\nWaiting for changes ... '));
                 }
                 else{
-                    console.log(chalk.dim("\nTo quit app: ctrl + c    ( here on console ) \n             command + q ( on the app window ) "));
+                    console.log(chalk.dim('\nTo quit app: ctrl + c    ( here on console ) \n             command + q ( on the app window ) '));
                 }
             };
 
@@ -219,43 +214,42 @@ export default class Package extends DataCollector{
             return;
         }
         
-        exec("npm run rbc::electron");
+        exec('npm run rbc::electron');
     }
 
-    runTest( comm ){
-        const watch = comm.indexOf("Watch") > -1;
-        let select = "";
+    static runTest(comm ){
+        const watch = comm.indexOf('Watch') > -1;
+        let select = '';
 
-        if( comm.indexOf("Karma") > -1){
-            select = watch ? "rbc::karmaWatch" : "rbc::karma";
+        if( comm.indexOf('Karma') > -1){
+            select = watch ? 'rbc::karmaWatch' : 'rbc::karma';
         }
-        else if( comm.indexOf("Jest") > -1 ){
-            select = watch ? "rbc::jestWatch" : "rbc::jest";
+        else if( comm.indexOf('Jest') > -1 ){
+            select = watch ? 'rbc::jestWatch' : 'rbc::jest';
 
         }
         else{
-            select = "rbc::storybook";
+            select = 'rbc::storybook';
         }
 
-        spawnSync("npm",[
+        spawnSync('npm',[
             'run',
             select
         ], { stdio:'inherit' });
 
     }
 
-    runRecompile( comm ){
-        const watch = comm.indexOf("Watch") > -1;
-        spawnSync("npm",[
+    static runRecompile(comm ){
+        const watch = comm.indexOf('Watch') > -1;
+        spawnSync('npm',[
             'run',
-            watch ? "rbc::recompileW" : "rbc::recompile"
+            watch ? 'rbc::recompileW' : 'rbc::recompile'
         ], { stdio:'inherit' });
     }
 
     runReset( comm ){
-        
-        const reader = new DataReader();
-        const reset = comm.indexOf("Delete") > -1;
+
+        const reset = comm.indexOf('Delete') > -1;
         
         if( reset ){
             console.log( chalk.red.bold('\n -------------------------------------') );
@@ -279,7 +273,7 @@ export default class Package extends DataCollector{
             obs.next({
                 type   : 'confirm',
                 name   : 'config',
-                message: chalk.red.bold(' Are you suer you want to delete your configuration file ( rbc.config.js ) ?'),
+                message: chalk.red.bold(' Are you sure you want to delete your configuration file ( rbc.config.js ) ?'),
                 when: !reset,
                 default: false,
             });
@@ -287,7 +281,7 @@ export default class Package extends DataCollector{
             obs.next({
                 type   : 'confirm',
                 name   : 'reset',
-                message: chalk.red.bold(' Are you suer you want to delete your configurtion file and template files ?'),
+                message: chalk.red.bold(' Are you sure you want to delete your configuration file and template files ?'),
                 default: false,
                 when   : reset
             });
@@ -298,25 +292,25 @@ export default class Package extends DataCollector{
         inquirer.prompt(observe).then( answers => {
             if( !!answers.reset ){
                 
-                const files = glob.sync("**/*.*", {
+                const files = glob.sync('**/*.*', {
                     cwd: this.rbc.templatesPath
-                });
+                }) || [];
 
                 files.push( this.client.configFilePath );
                 
                 files.forEach( f =>{
-                    const fName = f.replace("structure/", this.client.configFileData.paths.src + "/");
+                    const fName = f.replace('structure/', this.client.configFileData.paths.src + '/');
                     try{
-                        fse.unlinkSync( fName )
+                        fse.unlinkSync( fName );
                         console.log( chalk.yellow('Deleted'), chalk.dim(fName));
                     }
                     catch(e){}
                 } );
 
-                rimraf( path.resolve(this.client.configFileData.paths.src, "react"), ()=>{} );
-                rimraf( path.resolve(this.client.configFileData.paths.src, "electron"), ()=>{} );
-                rimraf( path.resolve(this.client.configFileData.paths.src, "storybook"), ()=>{} );
-                rimraf( path.resolve(this.client.configFileData.paths.src, "public"), ()=>{} );
+                rimraf( path.resolve(this.client.configFileData.paths.src, 'react'), ()=>{} );
+                rimraf( path.resolve(this.client.configFileData.paths.src, 'electron'), ()=>{} );
+                rimraf( path.resolve(this.client.configFileData.paths.src, 'storybook'), ()=>{} );
+                rimraf( path.resolve(this.client.configFileData.paths.src, 'public'), ()=>{} );
 
                 return;
             }
@@ -338,10 +332,9 @@ export default class Package extends DataCollector{
     deleteOldPublicFiles(){
         const destPath = this.client.configFileData.paths.dest;
         const emptyFunc = ()=>{};
-        rimraf( path.resolve(destPath, "css"), emptyFunc );
-        rimraf( path.resolve(destPath, "js"), emptyFunc );
-        rimraf( path.resolve(destPath, "images"), emptyFunc );
-        rimraf( path.resolve(destPath, "fonts"), emptyFunc );
+        rimraf( path.resolve(destPath, 'css'), emptyFunc );
+        rimraf( path.resolve(destPath, 'js'), emptyFunc );
+        rimraf( path.resolve(destPath, 'images'), emptyFunc );
+        rimraf( path.resolve(destPath, 'fonts'), emptyFunc );
     }
-    
 }

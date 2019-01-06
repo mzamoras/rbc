@@ -10,38 +10,69 @@
 
 import path from 'path';
 const webpack = require( 'webpack' );
-import autoprefixer from 'autoprefixer';
+
 import ExtractTextPlugin from 'extract-text-webpack-plugin';
 import WebpackNotifierPlugin from 'webpack-notifier';
 import CaseSensitivePlugin from 'case-sensitive-paths-webpack-plugin';
 import CompressionPlugin from 'compression-webpack-plugin';
 import ManifestPlugin from 'webpack-manifest-plugin';
 import WriteFilePlugin from 'write-file-webpack-plugin';
-const MinifyPlugin = require("babel-minify-webpack-plugin");
-import { CheckerPlugin } from 'awesome-typescript-loader';
-
+import MiniCssExtractPlugin from 'mini-css-extract-plugin';
+import UglifyJsPlugin from 'uglifyjs-webpack-plugin';
 
 import getURLData from '../utilities/getURLData';
 import babelConfig from '../config/babel.conf';
-import eslintConfig from '../config/eslint.conf';
 import pJson from '../../package.json';
+import {formatCssLoader} from '../utilities/helpers';
 
-export default function( isProductionEnvironment = false, hot = true, gziped = false, minimize = false, custom = {} ){
+export default function( isProductionEnvironment = false, _hot = true, gzipped = false, minimize = false, custom = {} ){
 
-    const extractLESS = new ExtractTextPlugin( { filename: 'css/[name].css', allChunks: true } );
-    const extractCSS  = new ExtractTextPlugin( 'css/[name]-two.css' );
+    const hot = _hot && !isProductionEnvironment;
+    const extractLESS_SASS = new ExtractTextPlugin( { filename: 'css/[name].css', allChunks: true } );
+    const extractCSS  = new MiniCssExtractPlugin( { filename: 'css/[name]css.css', chunkFilename: 'css/[id]css.css' } );
 
     const serverLocalURL    = getURLData( custom.base.localURL );
-    const serverLocalProxy  = custom.base.proxyURL ? getURLData( custom.base.proxyURL ) : null;
-    const browseSyncVersion = pJson.dependencies['browser-sync'].replace( "^", "" );
+    const browseSyncVersion = pJson.dependencies['browser-sync'].replace( '^', '' );
     const _useEslintrc      = custom.wp.eslintUsage.useEslintrc;
-    const testStylesPath    = path.resolve(custom.paths.src,"/tests/utilities/");
+    const testStylesPath    = path.resolve(custom.paths.src, '/tests/utilities/');
     const babelConfigData   =  babelConfig( isProductionEnvironment, hot, false/* newHot */ );
+
+    // const cssLoaders = [{
+    //     loader : 'css',
+    //     options: {
+    //         modules       : true,
+    //         localIdentName: cssModuleNaming(isProductionEnvironment),
+    //         sourceMap     : !isProductionEnvironment,
+    //         //minimize      : isProductionEnvironment
+    //         //importLoaders: 1
+    //     }
+    // }];
+    //
+    // if( isProductionEnvironment ){
+    //     cssLoaders.push( {
+    //         loader : 'postcss',
+    //         options: {
+    //             ident  : 'postcss',
+    //             plugins: function () {
+    //                 return [
+    //                     require('autoprefixer')( {
+    //                         browsers: [
+    //                             '>2%',
+    //                             'last 4 versions',
+    //                             'Firefox ESR',
+    //                             'not ie < 9', // React doesn't support IE8 anyway
+    //                         ]
+    //                     } )
+    //                 ]
+    //             }
+    //         }
+    //     } );
+    // }
 
     const config = {
         
-        devtool: isProductionEnvironment ? "source-map": "cheap-module-source-map",
-        mode   : isProductionEnvironment ? "production" : "development",
+        devtool: isProductionEnvironment ? 'source-map': 'cheap-module-source-map',
+        mode   : isProductionEnvironment ? 'production' : 'development',
 
         // Taking from configuration files
         entry : custom.wp.entry,
@@ -49,7 +80,7 @@ export default function( isProductionEnvironment = false, hot = true, gziped = f
             ...custom.wp.output,
             path      : custom.paths.dest,
             pathinfo  : true,
-            publicPath: serverLocalURL.full + "/"
+            publicPath: serverLocalURL.full + '/'
         },
         resolve: custom.wp.resolve,
 
@@ -65,109 +96,81 @@ export default function( isProductionEnvironment = false, hot = true, gziped = f
 
                 // E S L I N T
                 {
-                    test   : /\.jsx?$/,
+                    test   : [/\.jsx?$/, /\.tsx?$/],
                     loader : 'eslint',
                     include: [custom.paths.src_js, custom.paths.src_react],
-                    enforce: "pre",
+                    enforce: 'pre',
                     options: {
-                        ...( !_useEslintrc && { configFile : path.resolve( __dirname, "./eslint.conf.js" ) } ),
+                        ...( !_useEslintrc && { configFile : path.resolve( __dirname, './eslint.conf.js' ) } ),
                         useEslintrc: _useEslintrc
                     }
                 }, 
 
                 // T S L I N T
-                {
-                    test: /\.tsx?$/,
-                    enforce: "pre",
-                    include: [custom.paths.src_js, custom.paths.src_react],
-                    use:[{
-                        loader : 'tslint',
-                        options: {
-                            tsConfigFile: custom.paths.src_tsconfig || path.resolve(__dirname,"../../templates/tsconfig.json"),
-                            configFile: custom.paths.src_tslint || path.resolve(__dirname,"../../templates/tslint.json"),
-                            formattersDirectory: 'node_modules/custom-tslint-formatters/formatters',
-                            formatter: 'grouped'
-                        },
-                    }],
-                    //exclude: /(node_modules)/
-                },
+                // {
+                //     test: /\.tsx?$/,
+                //     enforce: "pre",
+                //     include: [custom.paths.src_js, custom.paths.src_react],
+                //     use:[{
+                //         loader : 'tslint',
+                //         options: {
+                //             tsConfigFile: custom.paths.src_tsconfig || path.resolve(__dirname,"../../templates/tsconfig.json"),
+                //             configFile: custom.paths.src_tslint || path.resolve(__dirname,"../../templates/tslint.json"),
+                //             formattersDirectory: 'node_modules/custom-tslint-formatters/formatters',
+                //             formatter: 'grouped'
+                //         },
+                //     }],
+                //     //exclude: /(node_modules)/
+                // },
 
                 // B A B E L
                 {
-                    test   : /\.jsx?$/,
+                    test   : /\.[jt]sx?$/,
                     include: [ custom.paths.src_js, custom.paths.src_react],
                     loader : 'babel',
                     query  : babelConfigData
                 },
 
-                // T Y P E S C R I P T
                 {
-                    test: /\.tsx?$/,
-                    loader: 'awesome-typescript',
-                    include: [ custom.paths.src_js, custom.paths.src_react],
-                    query:{ 
-                        useBabel: true, 
-                        babelOptions: {
-                            babelrc:false,
-                            presets: babelConfigData.presets,
-                            plugins: babelConfigData.plugins
-                        },
-                        configFileName: custom.paths.src_tsconfig || path.resolve(__dirname,"../../templates/tsconfig.json")
-                    }
+                    test: /\.jsx?$/,
+                    include: /node_modules/,
+                    use: ['react-hot-loader/webpack'],
                 },
 
                 // C S S
                 {
                     test   : /\.css$/,
                     include: [custom.paths.src_media, custom.paths.src_css, testStylesPath],
-                    loader : extractCSS.extract( {
-
-                        fallback: [{
-                            loader: 'style',
-                        }],
-                        
-                        use: ['css', 'postcss']
-                    } )
+                    use: [
+                        {
+                            loader: MiniCssExtractPlugin.loader
+                        },
+                    ].concat(formatCssLoader(isProductionEnvironment, { sourceMap: isProductionEnvironment } ))
                 },
 
                 // L E S S
                 {
                     test   : /\.less$/,
                     include: [custom.paths.src_media, custom.paths.src_less, testStylesPath],
-                    loader : extractLESS.extract( {
+                    loader : extractLESS_SASS.extract( {
                         fallback: [{
                             loader: 'style',
                         }],
 
-                        use: [
-                            {
-                                loader : 'css',
-                                options: {
-                                    modules       : true,
-                                    localIdentName: cssModuleNaming(isProductionEnvironment),
-                                    sourceMap     : !isProductionEnvironment,
-                                    minimize      : isProductionEnvironment
-                                }
-                            }, 
-                            {
-                            loader : 'postcss',
-                            options: {
-                                ident  : 'postcss',
-                                plugins: function () {
-                                    if ( !isProductionEnvironment ) return [];
-                                    return [
-                                        autoprefixer( {
-                                            browsers: [
-                                                '>2%',
-                                                'last 4 versions',
-                                                'Firefox ESR',
-                                                'not ie < 9', // React doesn't support IE8 anyway
-                                            ]
-                                        } )
-                                    ]
-                                }
-                            }
-                        }, 'less']
+                        use: formatCssLoader(isProductionEnvironment).concat(['less'])
+                    } )
+                },
+
+                // S C S S
+                {
+                    test   : /\.s[ac]ss$/,
+                    include: [custom.paths.src_media, custom.paths.src_sass, testStylesPath],
+                    loader : extractLESS_SASS.extract( {
+                        fallback: [{
+                            loader: 'style',
+                        }],
+
+                        use: formatCssLoader(isProductionEnvironment).concat(['sass'])
                     } )
                 },
 
@@ -177,7 +180,7 @@ export default function( isProductionEnvironment = false, hot = true, gziped = f
                     include: [custom.paths.src_media],
                     loader : 'file',
                     query  : {
-                        name: fileNaming( "media/images", isProductionEnvironment )
+                        name: fileNaming( 'media/images', isProductionEnvironment )
                     }
                 },
 
@@ -187,7 +190,7 @@ export default function( isProductionEnvironment = false, hot = true, gziped = f
                     include: [custom.paths.src_css, custom.paths.src_fonts],
                     loader : 'file',
                     query  : {
-                        name: fileNaming( "fonts", isProductionEnvironment )
+                        name: fileNaming( 'fonts', isProductionEnvironment )
                     }
                 },
 
@@ -198,7 +201,7 @@ export default function( isProductionEnvironment = false, hot = true, gziped = f
                     loader : 'url',
                     query  : {
                         limit: 10000,
-                        name : fileNaming( "media/videos", isProductionEnvironment )
+                        name : fileNaming( 'media/videos', isProductionEnvironment )
                     }
                 }
             ]
@@ -221,7 +224,7 @@ export default function( isProductionEnvironment = false, hot = true, gziped = f
              * boot.js file
              */
             runtimeChunk: {
-                name: "boot"
+                name: 'boot'
             },
 
             splitChunks: {
@@ -232,12 +235,30 @@ export default function( isProductionEnvironment = false, hot = true, gziped = f
                             chunks: 'all',
                             test: chunk => {
                                 const targets = custom.wp.vendorsInSameChunk || [];
-                                return targets.find( t => t.test( chunk.context ) );
+                                return targets.find( t => {
+                                    return t.test(chunk.context);
+                                } );
                             }
                         }
                     } )
                 }
-            }
+            },
+
+            minimizer: [new UglifyJsPlugin({
+                test: /\.js(\?.*)?$/i,
+                uglifyOptions: {
+                    warnings: false,
+                    parse: {},
+                    compress: {},
+                    mangle: true, // Note `mangle.properties` is `false` by default.
+                    output: null,
+                    toplevel: false,
+                    nameCache: null,
+                    ie8: false,
+                    keep_fnames: false
+                },
+                extractComments: true
+            })],
         },
 
         plugins: [
@@ -267,9 +288,10 @@ export default function( isProductionEnvironment = false, hot = true, gziped = f
             new WriteFilePlugin( { test: /(js|css|media|fonts)\// } ),
 
             // Extract for less and css
-            extractLESS,
+            extractLESS_SASS,
+            //extractSASS,
             extractCSS,
-            new CheckerPlugin()
+            //new CheckerPlugin()
 
         ]
 
@@ -278,7 +300,7 @@ export default function( isProductionEnvironment = false, hot = true, gziped = f
     // Allowing Cross Origin
     if( custom.base.allowCrossOrigin ){
         config.devServer = {
-            headers: { "Access-Control-Allow-Origin": "*" }
+            headers: { 'Access-Control-Allow-Origin': '*' }
         }
     }
 
@@ -292,16 +314,21 @@ export default function( isProductionEnvironment = false, hot = true, gziped = f
         } ) );
     }
 
-    if ( minimize ) {
-        //config.plugins.push( new webpack.optimize.UglifyJsPlugin( settings.uglify ) );
-        config.plugins.push(new MinifyPlugin({}, { test: /\.js($|\?)/i }) );
-        
-    }
+    // if ( minimize === 99999 ) {
+    //     //config.plugins.push( new webpack.optimize.UglifyJsPlugin( settings.uglify ) );
+    //     config.plugins.push(new MinifyPlugin({
+    //         mangle: {
+    //             keepFnName: false
+    //         },
+    //
+    //     }, { test: /\.js($|\?)/i }) );
+    //
+    // }
 
-    if( gziped ){
+    if( gzipped ){
         config.plugins.push( new CompressionPlugin( {
-            asset    : "[path].gz[query]",
-            algorithm: "gzip",
+            filename    : '[path].gz[query]',
+            algorithm: 'gzip',
             test     : /\.js$|\.css$|\.html$/,
             minRatio : 0.8
         } ) );
@@ -314,8 +341,7 @@ export default function( isProductionEnvironment = false, hot = true, gziped = f
 
         config.plugins.push( new webpack.HotModuleReplacementPlugin() );
         config.plugins.push( new webpack.NamedModulesPlugin() );
-        //if ( newHot ) config.entry.app.push( 'react-hot-loader/patch' );
-        config.entry[lastEntry].push( 'webpack-hot-middleware/client' + '?path=' + serverLocalURL.full + '/__webpack_hmr' );
+        config.entry[lastEntry].push( 'webpack-hot-middleware/client' );
         
         if(!isProductionEnvironment){
             config.entry[lastEntry].push( require.resolve( '../utilities/browserSyncDuplicates.js' ) );
@@ -326,14 +352,14 @@ export default function( isProductionEnvironment = false, hot = true, gziped = f
 };
 
 
-function cssModuleNaming( prod ){
-    const hashing = 'hash:base64';
-    return prod ? `[${hashing}:7]`: `[name]--[local]__[${hashing}:5]`;
-}
+// function cssModuleNaming( prod ){
+//     const hashing = 'hash:base64';
+//     return prod ? `[${hashing}:7]`: `[name]--[local]__[${hashing}:5]`;
+// }
 
 function fileNaming( name = null, prod, useExtension = true, specialProd = false ){
 
-    const dirName   = name ? name + "/" : "";
-    const extension = useExtension ? "." + "[ext]" : "";
-    return `${dirName}[${ prod ? "sha512:hash:base64:7" : 'name'}]${extension}`;
+    const dirName   = name ? name + '/' : '';
+    const extension = useExtension ? '.[ext]' : '';
+    return `${dirName}[${ prod ? 'sha512:hash:base64:7' : 'name'}]${extension}`;
 }

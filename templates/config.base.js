@@ -17,7 +17,7 @@ module.exports = function( isProductionEnvironment, isHotModuleReloadEnabled ){
     /**
      * This is the folder where the app data is stored
      */
-    const mainFolder = path.resolve("./reactApp");
+    const mainFolder = path.resolve('./reactApp');
     
     
     /**
@@ -29,12 +29,13 @@ module.exports = function( isProductionEnvironment, isHotModuleReloadEnabled ){
 
         src : mainFolder,
         dest: path.resolve(mainFolder, 'public'),
-        node: path.resolve("./node_modules"),
+        node: path.resolve('./node_modules'),
 
         src_react: path.join( mainFolder, 'react' ),
         src_js   : path.join( mainFolder, 'assets/js' ),
         src_css  : path.join( mainFolder, 'assets/css' ),
         src_less : path.join( mainFolder, 'assets/less' ),
+        src_sass : path.join( mainFolder, 'assets/sass' ),
         src_media: path.join( mainFolder, 'assets/media' ),
         src_fonts: path.join( mainFolder, 'assets/fonts' ),
 
@@ -44,10 +45,10 @@ module.exports = function( isProductionEnvironment, isHotModuleReloadEnabled ){
     };
 
     config.base = {
-        projectName      : "%PROJECT_NAME%",
+        projectName      : '%PROJECT_NAME%',
         notificationsIcon: null,
-        localURL         : "%LOCAL_ADDRESS%",
-        //USE_PROXY//proxyURL        : "%PROXY_ADDRESS%",
+        localURL         : '%LOCAL_ADDRESS%',
+        //USE_PROXY//proxyURL        : '%PROXY_ADDRESS%',
         allowCrossOrigin: !isProductionEnvironment,
         useStaticHTML   : true,//USE_STATIC//,
         autoOpenChrome  : false,//OPEN_CHROME//,
@@ -66,28 +67,29 @@ module.exports = function( isProductionEnvironment, isHotModuleReloadEnabled ){
              * This base file is a compilation of global variables
              * and utilities needed across the app, and will be available
              * and required before the actual app, also includes the 
-             * pollyfills needed
+             * polyfills needed
              */
             base: [
+                // '@babel/polyfill',  <-- Temporarily disabled due to errors
                 'babel-polyfill',
-                path.join(config.paths.src_js,"base.js")
+                path.join(config.paths.src_js,'base.js')
             ],
             /**
              * The actual app's main file, this is the file that
              * attaches the App component to the dom
              */
             app:[
-                path.join(config.paths.src_js,"app.js")
+                path.join(config.paths.src_js,'app.js')
             ]
         },
 
         output:{
-            filename     : "js/[name].js",
-            chunkFilename: "js/[name].js"
+            filename     : 'js/[name].js',
+            chunkFilename: 'js/[name].js'
         },
 
         resolve:{
-            extensions: [ ".js", ".jsx", ".json", ".ts", ".tsx" ]
+            extensions: [ '.js', '.jsx', '.json', '.ts', '.tsx' ]
         },
 
         vendorsInSameChunk: [
@@ -108,13 +110,13 @@ module.exports = function( isProductionEnvironment, isHotModuleReloadEnabled ){
     config.storyBook = {
         path: path.join( mainFolder, 'storybook' ),
         port: 9001
-    }
+    };
 
     config.tests = {
         path: path.join( mainFolder, 'react/tests' ),
         karmaIndex: path.join( mainFolder, 'react/tests/configuration/karma.index.js' ),
         jestIndex: path.join( mainFolder, 'react/tests/configuration/jest.index.js' ),
-    }
+    };
 
     return config;
-}
+};

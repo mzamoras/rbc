@@ -8,17 +8,17 @@
  * Copyright 2014-present. | All rights reserved.
  */
 
-import fse from "fs-extra";
+import fse from 'fs-extra';
 import path from 'path';
 
 export default class DataReader{
     
-    get paths(){
+    static get paths(){
 
-        const rbcPath    = path.resolve( __dirname, "../../" );
-        const clientPath = path.resolve( rbcPath, "../../" );
-        const jsonName   = "package.json";
-        const confName   = "rbc.config.js";
+        const rbcPath    = path.resolve( __dirname, '../../' );
+        const clientPath = path.resolve( rbcPath, '../../' );
+        const jsonName   = 'package.json';
+        const confName   = 'rbc.config.js';
 
         return{
             client      : clientPath,
@@ -29,9 +29,9 @@ export default class DataReader{
         }
     }
 
-    get json(){
+    static get json(){
 
-        const { rbcJson, clientJson } = this.paths;
+        const { rbcJson, clientJson } = DataReader.paths;
 
         return{
             rbc   : fse.readJsonSync( rbcJson, { throws: false } ) || null,
@@ -39,8 +39,8 @@ export default class DataReader{
         }
     }
 
-    get config(){
-        const { clientConfig } = this.paths;
+    static get config(){
+        const { clientConfig } = DataReader.paths;
         const hasConfig        = fse.pathExistsSync( clientConfig );
     
         return hasConfig ?  require( clientConfig )( false, false ): {};
@@ -48,10 +48,10 @@ export default class DataReader{
 
     get newPackageJson(){
 
-        this._oldPackageJson = this._oldPackageJson || this.json.client || null;
+        this._oldPackageJson = this._oldPackageJson || DataReader.json.client || null;
         
         if( !this._oldPackageJson ){
-            console.log( "Couldn't find package.json file in ", this.paths.clientJson );
+            console.log( 'Couldn\'t find package.json file in ', DataReader.paths.clientJson );
             return;
         }
 
@@ -85,8 +85,8 @@ export default class DataReader{
             this.newPackageJson[key] = {};
         }
 
-        const titleFixed = title.replace("//","");
-        this.newPackageJson[key]["// " + titleFixed] = value;
+        const titleFixed = title.replace('//','');
+        this.newPackageJson[key]['// ' + titleFixed] = value;
     }
 
 
@@ -96,16 +96,16 @@ export default class DataReader{
         this.newPackageJson.scripts = this.newPackageJson.scripts || {};
 
         if( typeof script !== 'string' ){
-            for (var key in script) {
+            for (let key in script) {
                 if (script.hasOwnProperty(key)) {
-                    const pref = key.indexOf("//") > -1 ? "//" : prefix;
+                    const pref = key.indexOf('//') > -1 ? '//' : prefix;
                     this.addClientScript( key, script[key], pref );
                 }
             }
         }
         else{
-            if( scriptName.indexOf("//") > -1 ){
-                this.insertCommentOnClientJson( "scripts", scriptName, script );
+            if( scriptName.indexOf('//') > -1 ){
+                this.insertCommentOnClientJson( 'scripts', scriptName, script );
             }
             else{
                 this.insertInClientPackageJsonKey( 'scripts', `${prefix}${scriptName}`, script );
@@ -115,8 +115,6 @@ export default class DataReader{
     }
 
     saveClientPackageJson(){
-        fse.writeJSONSync( this.paths.clientJson, this.newPackageJson, { spaces: 4 } );
+        fse.writeJSONSync( DataReader.paths.clientJson, this.newPackageJson, { spaces: 4 } );
     }
-
 }
-
