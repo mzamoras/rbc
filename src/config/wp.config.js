@@ -10,31 +10,64 @@
 
 import path from 'path';
 const webpack = require( 'webpack' );
-import autoprefixer from 'autoprefixer';
+
 import ExtractTextPlugin from 'extract-text-webpack-plugin';
 import WebpackNotifierPlugin from 'webpack-notifier';
 import CaseSensitivePlugin from 'case-sensitive-paths-webpack-plugin';
 import CompressionPlugin from 'compression-webpack-plugin';
 import ManifestPlugin from 'webpack-manifest-plugin';
 import WriteFilePlugin from 'write-file-webpack-plugin';
-const MinifyPlugin = require('babel-minify-webpack-plugin');
-
+import MiniCssExtractPlugin from 'mini-css-extract-plugin';
+import UglifyJsPlugin from 'uglifyjs-webpack-plugin';
 
 import getURLData from '../utilities/getURLData';
 import babelConfig from '../config/babel.conf';
 import pJson from '../../package.json';
+import {formatCssLoader} from '../utilities/helpers';
 
-export default function( isProductionEnvironment = false, hot = true, gzipped = false, minimize = false, custom = {} ){
+export default function( isProductionEnvironment = false, _hot = true, gzipped = false, minimize = false, custom = {} ){
 
-    const extractLESS = new ExtractTextPlugin( { filename: 'css/[name].css', allChunks: true } );
-    const extractCSS  = new ExtractTextPlugin( 'css/[name]-two.css' );
+    const hot = _hot && !isProductionEnvironment;
+    const extractLESS_SASS = new ExtractTextPlugin( { filename: 'css/[name].css', allChunks: true } );
+    const extractCSS  = new MiniCssExtractPlugin( { filename: 'css/[name]css.css', chunkFilename: 'css/[id]css.css' } );
 
     const serverLocalURL    = getURLData( custom.base.localURL );
-    //const serverLocalProxy  = custom.base['proxyURL'] ? getURLData( custom.base['proxyURL'] ) : null;
     const browseSyncVersion = pJson.dependencies['browser-sync'].replace( '^', '' );
     const _useEslintrc      = custom.wp.eslintUsage.useEslintrc;
     const testStylesPath    = path.resolve(custom.paths.src, '/tests/utilities/');
     const babelConfigData   =  babelConfig( isProductionEnvironment, hot, false/* newHot */ );
+
+    // const cssLoaders = [{
+    //     loader : 'css',
+    //     options: {
+    //         modules       : true,
+    //         localIdentName: cssModuleNaming(isProductionEnvironment),
+    //         sourceMap     : !isProductionEnvironment,
+    //         //minimize      : isProductionEnvironment
+    //         //importLoaders: 1
+    //     }
+    // }];
+    //
+    // if( isProductionEnvironment ){
+    //     cssLoaders.push( {
+    //         loader : 'postcss',
+    //         options: {
+    //             ident  : 'postcss',
+    //             plugins: function () {
+    //                 return [
+    //                     require('autoprefixer')( {
+    //                         browsers: [
+    //                             '>2%',
+    //                             'last 4 versions',
+    //                             'Firefox ESR',
+    //                             'not ie < 9', // React doesn't support IE8 anyway
+    //                         ]
+    //                     } )
+    //                 ]
+    //             }
+    //         }
+    //     } );
+    // }
 
     const config = {
         
@@ -108,54 +141,36 @@ export default function( isProductionEnvironment = false, hot = true, gzipped = 
                 {
                     test   : /\.css$/,
                     include: [custom.paths.src_media, custom.paths.src_css, testStylesPath],
-                    loader : extractCSS.extract( {
-
-                        fallback: [{
-                            loader: 'style',
-                        }],
-                        
-                        use: ['css', 'postcss']
-                    } )
+                    use: [
+                        {
+                            loader: MiniCssExtractPlugin.loader
+                        },
+                    ].concat(formatCssLoader(isProductionEnvironment, { sourceMap: isProductionEnvironment } ))
                 },
 
                 // L E S S
                 {
                     test   : /\.less$/,
                     include: [custom.paths.src_media, custom.paths.src_less, testStylesPath],
-                    loader : extractLESS.extract( {
+                    loader : extractLESS_SASS.extract( {
                         fallback: [{
                             loader: 'style',
                         }],
 
-                        use: [
-                            {
-                                loader : 'css',
-                                options: {
-                                    modules       : true,
-                                    localIdentName: cssModuleNaming(isProductionEnvironment),
-                                    sourceMap     : !isProductionEnvironment,
-                                    //minimize      : isProductionEnvironment
-                                }
-                            }, 
-                            {
-                            loader : 'postcss',
-                            options: {
-                                ident  : 'postcss',
-                                plugins: function () {
-                                    if ( !isProductionEnvironment ) return [];
-                                    return [
-                                        autoprefixer( {
-                                            browsers: [
-                                                '>2%',
-                                                'last 4 versions',
-                                                'Firefox ESR',
-                                                'not ie < 9', // React doesn't support IE8 anyway
-                                            ]
-                                        } )
-                                    ]
-                                }
-                            }
-                        }, 'less']
+                        use: formatCssLoader(isProductionEnvironment).concat(['less'])
+                    } )
+                },
+
+                // S C S S
+                {
+                    test   : /\.s[ac]ss$/,
+                    include: [custom.paths.src_media, custom.paths.src_sass, testStylesPath],
+                    loader : extractLESS_SASS.extract( {
+                        fallback: [{
+                            loader: 'style',
+                        }],
+
+                        use: formatCssLoader(isProductionEnvironment).concat(['sass'])
                     } )
                 },
 
@@ -227,7 +242,23 @@ export default function( isProductionEnvironment = false, hot = true, gzipped = 
                         }
                     } )
                 }
-            }
+            },
+
+            minimizer: [new UglifyJsPlugin({
+                test: /\.js(\?.*)?$/i,
+                uglifyOptions: {
+                    warnings: false,
+                    parse: {},
+                    compress: {},
+                    mangle: true, // Note `mangle.properties` is `false` by default.
+                    output: null,
+                    toplevel: false,
+                    nameCache: null,
+                    ie8: false,
+                    keep_fnames: false
+                },
+                extractComments: true
+            })],
         },
 
         plugins: [
@@ -257,7 +288,8 @@ export default function( isProductionEnvironment = false, hot = true, gzipped = 
             new WriteFilePlugin( { test: /(js|css|media|fonts)\// } ),
 
             // Extract for less and css
-            extractLESS,
+            extractLESS_SASS,
+            //extractSASS,
             extractCSS,
             //new CheckerPlugin()
 
@@ -282,11 +314,16 @@ export default function( isProductionEnvironment = false, hot = true, gzipped = 
         } ) );
     }
 
-    if ( minimize ) {
-        //config.plugins.push( new webpack.optimize.UglifyJsPlugin( settings.uglify ) );
-        config.plugins.push(new MinifyPlugin({}, { test: /\.js($|\?)/i }) );
-        
-    }
+    // if ( minimize === 99999 ) {
+    //     //config.plugins.push( new webpack.optimize.UglifyJsPlugin( settings.uglify ) );
+    //     config.plugins.push(new MinifyPlugin({
+    //         mangle: {
+    //             keepFnName: false
+    //         },
+    //
+    //     }, { test: /\.js($|\?)/i }) );
+    //
+    // }
 
     if( gzipped ){
         config.plugins.push( new CompressionPlugin( {
@@ -315,10 +352,10 @@ export default function( isProductionEnvironment = false, hot = true, gzipped = 
 };
 
 
-function cssModuleNaming( prod ){
-    const hashing = 'hash:base64';
-    return prod ? `[${hashing}:7]`: `[name]--[local]__[${hashing}:5]`;
-}
+// function cssModuleNaming( prod ){
+//     const hashing = 'hash:base64';
+//     return prod ? `[${hashing}:7]`: `[name]--[local]__[${hashing}:5]`;
+// }
 
 function fileNaming( name = null, prod, useExtension = true, specialProd = false ){
 

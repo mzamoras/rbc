@@ -15,6 +15,9 @@ export default function( style = 'light' ){
         style,
         primaryColor  : '#CC0000',
         secondaryColor: '#00DD00',
+        typography: {
+            useNextVariants: true
+        },
         themeStyle    : {
             light:{
                 bgColor       : '#F2F2F2',

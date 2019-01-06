@@ -43,6 +43,9 @@ module.exports = {
             node: {
                 extensions: ['.js', '.json']
             }
+        },
+        'react':{
+            version: 'latest'
         }
     },
 

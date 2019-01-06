@@ -15,6 +15,7 @@
  */
 
 /** S T Y L E S */
+import '../css/some.css';
 import '../less/base.less';
 
 

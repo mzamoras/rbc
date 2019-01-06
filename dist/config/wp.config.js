@@ -7,8 +7,6 @@ exports.default = _default;
 
 var _path = _interopRequireDefault(require("path"));
 
-var _autoprefixer = _interopRequireDefault(require("autoprefixer"));
-
 var _extractTextWebpackPlugin = _interopRequireDefault(require("extract-text-webpack-plugin"));
 
 var _webpackNotifier = _interopRequireDefault(require("webpack-notifier"));
@@ -21,11 +19,17 @@ var _webpackManifestPlugin = _interopRequireDefault(require("webpack-manifest-pl
 
 var _writeFileWebpackPlugin = _interopRequireDefault(require("write-file-webpack-plugin"));
 
+var _miniCssExtractPlugin = _interopRequireDefault(require("mini-css-extract-plugin"));
+
+var _uglifyjsWebpackPlugin = _interopRequireDefault(require("uglifyjs-webpack-plugin"));
+
 var _getURLData = _interopRequireDefault(require("../utilities/getURLData"));
 
 var _babel = _interopRequireDefault(require("../config/babel.conf"));
 
 var _package = _interopRequireDefault(require("../../package.json"));
+
+var _helpers = require("../utilities/helpers");
 
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
@@ -39,16 +43,26 @@ var MinifyPlugin = require('babel-minify-webpack-plugin');
 
 function _default() {
   var isProductionEnvironment = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : false;
-  var hot = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : true;
+
+  var _hot = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : true;
+
   var gzipped = arguments.length > 2 && arguments[2] !== undefined ? arguments[2] : false;
   var minimize = arguments.length > 3 && arguments[3] !== undefined ? arguments[3] : false;
   var custom = arguments.length > 4 && arguments[4] !== undefined ? arguments[4] : {};
+  var hot = _hot && !isProductionEnvironment;
   var extractLESS = new _extractTextWebpackPlugin.default({
     filename: 'css/[name].css',
     allChunks: true
   });
-  var extractCSS = new _extractTextWebpackPlugin.default('css/[name]-two.css');
-  var serverLocalURL = (0, _getURLData.default)(custom.base.localURL); //const serverLocalProxy  = custom.base['proxyURL'] ? getURLData( custom.base['proxyURL'] ) : null;
+  var extractSASS = new _extractTextWebpackPlugin.default({
+    filename: 'css/[name].css',
+    allChunks: true
+  });
+  var extractCSS = new _miniCssExtractPlugin.default({
+    filename: 'css/[name]css.css',
+    chunkFilename: 'css/[id]css.css'
+  });
+  var serverLocalURL = (0, _getURLData.default)(custom.base.localURL);
 
   var browseSyncVersion = _package.default.dependencies['browser-sync'].replace('^', '');
 
@@ -58,7 +72,37 @@ function _default() {
 
   var babelConfigData = (0, _babel.default)(isProductionEnvironment, hot, false
   /* newHot */
-  );
+  ); // const cssLoaders = [{
+  //     loader : 'css',
+  //     options: {
+  //         modules       : true,
+  //         localIdentName: cssModuleNaming(isProductionEnvironment),
+  //         sourceMap     : !isProductionEnvironment,
+  //         //minimize      : isProductionEnvironment
+  //         //importLoaders: 1
+  //     }
+  // }];
+  //
+  // if( isProductionEnvironment ){
+  //     cssLoaders.push( {
+  //         loader : 'postcss',
+  //         options: {
+  //             ident  : 'postcss',
+  //             plugins: function () {
+  //                 return [
+  //                     require('autoprefixer')( {
+  //                         browsers: [
+  //                             '>2%',
+  //                             'last 4 versions',
+  //                             'Firefox ESR',
+  //                             'not ie < 9', // React doesn't support IE8 anyway
+  //                         ]
+  //                     } )
+  //                 ]
+  //             }
+  //         }
+  //     } );
+  // }
 
   var config = _objectSpread({
     devtool: isProductionEnvironment ? 'source-map' : 'cheap-module-source-map',
@@ -119,12 +163,11 @@ function _default() {
       {
         test: /\.css$/,
         include: [custom.paths.src_media, custom.paths.src_css, testStylesPath],
-        loader: extractCSS.extract({
-          fallback: [{
-            loader: 'style'
-          }],
-          use: ['css', 'postcss']
-        })
+        use: [{
+          loader: _miniCssExtractPlugin.default.loader
+        }].concat((0, _helpers.formatCssLoader)(isProductionEnvironment, {
+          sourceMap: isProductionEnvironment
+        }))
       }, // L E S S
       {
         test: /\.less$/,
@@ -133,26 +176,17 @@ function _default() {
           fallback: [{
             loader: 'style'
           }],
-          use: [{
-            loader: 'css',
-            options: {
-              modules: true,
-              localIdentName: cssModuleNaming(isProductionEnvironment),
-              sourceMap: !isProductionEnvironment //minimize      : isProductionEnvironment
-
-            }
-          }, {
-            loader: 'postcss',
-            options: {
-              ident: 'postcss',
-              plugins: function plugins() {
-                if (!isProductionEnvironment) return [];
-                return [(0, _autoprefixer.default)({
-                  browsers: ['>2%', 'last 4 versions', 'Firefox ESR', 'not ie < 9']
-                })];
-              }
-            }
-          }, 'less']
+          use: (0, _helpers.formatCssLoader)(isProductionEnvironment).concat(['less'])
+        })
+      }, // S C S S
+      {
+        test: /\.s[ac]ss$/,
+        include: [custom.paths.src_media, custom.paths.src_sass, testStylesPath],
+        loader: extractLESS.extract({
+          fallback: [{
+            loader: 'style'
+          }],
+          use: (0, _helpers.formatCssLoader)(isProductionEnvironment).concat(['sass'])
         })
       }, // I M A G E S
       {
@@ -212,7 +246,23 @@ function _default() {
             }
           }
         })
-      }
+      },
+      minimizer: [new _uglifyjsWebpackPlugin.default({
+        test: /\.js(\?.*)?$/i,
+        uglifyOptions: {
+          warnings: false,
+          parse: {},
+          compress: {},
+          mangle: true,
+          // Note `mangle.properties` is `false` by default.
+          output: null,
+          toplevel: false,
+          nameCache: null,
+          ie8: false,
+          keep_fnames: false
+        },
+        extractComments: true
+      })]
     },
     plugins: [
     /**
@@ -238,7 +288,8 @@ function _default() {
     new _writeFileWebpackPlugin.default({
       test: /(js|css|media|fonts)\//
     }), // Extract for less and css
-    extractLESS, extractCSS]
+    extractLESS, //extractSASS,
+    extractCSS]
   }); // Allowing Cross Origin
 
 
@@ -258,14 +309,17 @@ function _default() {
       alwaysNotify: true,
       contentImage: custom.base.notificationsIcon || _path.default.resolve(__dirname, '../../templates/rbc.png')
     }));
-  }
+  } // if ( minimize === 99999 ) {
+  //     //config.plugins.push( new webpack.optimize.UglifyJsPlugin( settings.uglify ) );
+  //     config.plugins.push(new MinifyPlugin({
+  //         mangle: {
+  //             keepFnName: false
+  //         },
+  //
+  //     }, { test: /\.js($|\?)/i }) );
+  //
+  // }
 
-  if (minimize) {
-    //config.plugins.push( new webpack.optimize.UglifyJsPlugin( settings.uglify ) );
-    config.plugins.push(new MinifyPlugin({}, {
-      test: /\.js($|\?)/i
-    }));
-  }
 
   if (gzipped) {
     config.plugins.push(new _compressionWebpackPlugin.default({
@@ -291,12 +345,10 @@ function _default() {
   return config;
 }
 
-;
-
-function cssModuleNaming(prod) {
-  var hashing = 'hash:base64';
-  return prod ? "[".concat(hashing, ":7]") : "[name]--[local]__[".concat(hashing, ":5]");
-}
+; // function cssModuleNaming( prod ){
+//     const hashing = 'hash:base64';
+//     return prod ? `[${hashing}:7]`: `[name]--[local]__[${hashing}:5]`;
+// }
 
 function fileNaming() {
   var name = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : null;

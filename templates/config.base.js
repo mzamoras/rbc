@@ -35,6 +35,7 @@ module.exports = function( isProductionEnvironment, isHotModuleReloadEnabled ){
         src_js   : path.join( mainFolder, 'assets/js' ),
         src_css  : path.join( mainFolder, 'assets/css' ),
         src_less : path.join( mainFolder, 'assets/less' ),
+        src_sass : path.join( mainFolder, 'assets/sass' ),
         src_media: path.join( mainFolder, 'assets/media' ),
         src_fonts: path.join( mainFolder, 'assets/fonts' ),
 
