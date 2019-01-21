@@ -1,8 +1,9 @@
 {
   "name": "react-base-starter-project",
+  "showName": "React Base Starter Project",
   "version": "0.2.0",
   "description": "Starts a React Base Project with all minimum requirements to start developing right away.",
-  "main": "index.js",
+  "main": "dist/newStart.js",
   "scripts": {
     "test_": "echo \"Error: no test specified\" && exit 1",
     "test": "babel-node --presets env src/scripts/boot.js",
@@ -10,6 +11,7 @@
     "inspect": "babel-node --inspect --presets env scripts/start",
     "postinstall": "node ./dist/scripts/postInstall.js && echo \"P O S T  I N S T A L L  S C R I P T\"",
     "preinstall": "node ./scripts/preInstall.js",
+    "rbc": "node dist/newStart.js",
     "//preinstall": "npm run compile",
     "compile": "rimraf ./dist && babel --presets @babel/env --plugins @babel/plugin-proposal-object-rest-spread -d ./dist/ ./src/ --copy-files",
     "compile:watch": "rimraf ./dist && babel --presets @babel/env --plugins @babel/plugin-proposal-object-rest-spread -d ./dist/ ./src/ --copy-files -w"
@@ -30,7 +32,10 @@
     "base",
     "react"
   ],
-  "devDependencies": {},
+  "devDependencies": {
+    "boxen": "^2.1.0",
+    "react-dev-utils": "^7.0.1"
+  },
   "dependencies": {
     "@babel/cli": "^7.2.3",
     "@babel/core": "^7.2.2",
@@ -63,6 +68,7 @@
     "chai": "^4.2.0",
     "chalk": "^2.1.0",
     "classnames": "^2.2.5",
+    "commander": "^2.19.0",
     "compression-webpack-plugin": "^2.0.0",
     "connect-gzip-static": "^2.1.1",
     "connected-react-router": "^6.1.0",

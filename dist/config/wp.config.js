@@ -39,8 +39,6 @@ function _defineProperty(obj, key, value) { if (key in obj) { Object.definePrope
 
 var webpack = require('webpack');
 
-var MinifyPlugin = require('babel-minify-webpack-plugin');
-
 function _default() {
   var isProductionEnvironment = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : false;
 
@@ -50,11 +48,7 @@ function _default() {
   var minimize = arguments.length > 3 && arguments[3] !== undefined ? arguments[3] : false;
   var custom = arguments.length > 4 && arguments[4] !== undefined ? arguments[4] : {};
   var hot = _hot && !isProductionEnvironment;
-  var extractLESS = new _extractTextWebpackPlugin.default({
-    filename: 'css/[name].css',
-    allChunks: true
-  });
-  var extractSASS = new _extractTextWebpackPlugin.default({
+  var extractLESS_SASS = new _extractTextWebpackPlugin.default({
     filename: 'css/[name].css',
     allChunks: true
   });
@@ -172,7 +166,7 @@ function _default() {
       {
         test: /\.less$/,
         include: [custom.paths.src_media, custom.paths.src_less, testStylesPath],
-        loader: extractLESS.extract({
+        loader: extractLESS_SASS.extract({
           fallback: [{
             loader: 'style'
           }],
@@ -182,7 +176,7 @@ function _default() {
       {
         test: /\.s[ac]ss$/,
         include: [custom.paths.src_media, custom.paths.src_sass, testStylesPath],
-        loader: extractLESS.extract({
+        loader: extractLESS_SASS.extract({
           fallback: [{
             loader: 'style'
           }],
@@ -288,7 +282,7 @@ function _default() {
     new _writeFileWebpackPlugin.default({
       test: /(js|css|media|fonts)\//
     }), // Extract for less and css
-    extractLESS, //extractSASS,
+    extractLESS_SASS, //extractSASS,
     extractCSS]
   }); // Allowing Cross Origin
 
